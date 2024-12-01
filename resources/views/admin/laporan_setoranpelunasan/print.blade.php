@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Laporan Penjualan Produk</title>
     <style>
@@ -9,72 +10,92 @@
             margin: 0;
             padding: 0;
         }
+
         table {
-            width: 100%; /* Lebar tabel 100% */
+            width: 100%;
+            /* Lebar tabel 100% */
             border-collapse: collapse;
-            margin: 0; /* Menghapus margin di sekitar tabel */
+            margin: 0;
+            /* Menghapus margin di sekitar tabel */
             padding: 0;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid black;
-            padding: 5px; /* Mengurangi padding untuk menghindari kolom yang terlalu lebar */
+            padding: 5px;
+            /* Mengurangi padding untuk menghindari kolom yang terlalu lebar */
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
             text-align: center;
         }
+
         td {
             text-align: center;
         }
+
         .header {
             text-align: center;
             margin-top: 3px;
         }
+
         .header .title {
             font-weight: bold;
             font-size: 28px;
             margin-bottom: 5px;
             margin-top: 5px;
         }
+
         .header .title1 {
             margin-top: 5px;
             font-size: 14px;
             margin-bottom: 5px;
         }
+
         .header .title2 {
             font-weight: bold;
             font-size: 18px;
         }
+
         .header .period {
             font-size: 12px;
             margin-top: 10px;
         }
-        .header .address, .header .contact {
+
+        .header .address,
+        .header .contact {
             font-size: 12px;
         }
+
         .divider {
             border: 0.5px solid;
             margin-top: 3px;
             margin-bottom: 1px;
         }
+
         .table-container {
-            margin: 0; /* Menghapus margin pada container tabel */
-            padding: 0; /* Menghapus padding pada container */
+            margin: 0;
+            /* Menghapus margin pada container tabel */
+            padding: 0;
+            /* Menghapus padding pada container */
             font-size: 7px;
         }
-    
+
         table.no-border {
             border-collapse: collapse;
             width: 100%;
         }
-    
-        table.no-border, 
-        table.no-border tr, 
+
+        table.no-border,
+        table.no-border tr,
         table.no-border td {
             border: none !important;
         }
-    
+
         /* Tabel untuk total fee penjualan dan grand total */
         .summary-table {
             width: 50%;
@@ -83,28 +104,34 @@
             margin-top: 20px;
             border: none;
         }
+
         .summary-table td {
             padding: 8px;
             font-size: 12px;
             border: none !important;
         }
+
         .summary-table .text-right {
             text-align: right;
         }
+
         .summary-table .text-left {
             text-align: left;
         }
+
         .summary-table .bold {
             font-weight: bold;
         }
+
         .logo img {
             width: 100px;
             height: 60px;
         }
     </style>
 </head>
+
 <body>
-   
+
     <div class="header">
         <div class="logo">
             <img src="{{ asset('storage/uploads/icon/bakery.png') }}" alt="JAVA BAKERY">
@@ -112,16 +139,18 @@
         <h1 class="title">PT JAVA BAKERY FACTORY</h1>
         <p class="title1">Cabang: {{ strtoupper($branchName) }}</p>
         <div class="divider"></div>
-    
+
         <h1 class="title2">LAPORAN PELUNASAN PENJUALAN</h1>
-    
+
         @php
             \Carbon\Carbon::setLocale('id'); // Set locale ke bahasa Indonesia
-            $formattedStartDate = $startDate ? \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y') : 'Tidak ada';
+            $formattedStartDate = $startDate
+                ? \Carbon\Carbon::parse($startDate)->translatedFormat('d F Y')
+                : 'Tidak ada';
             $formattedEndDate = $endDate ? \Carbon\Carbon::parse($endDate)->translatedFormat('d F Y') : 'Tidak ada';
             $currentDateTime = \Carbon\Carbon::now()->translatedFormat('d F Y H:i');
         @endphp
-    
+
         <p class="period">
             @if ($startDate && $endDate)
                 Periode: {{ $formattedStartDate }} s/d {{ $formattedEndDate }}
@@ -129,7 +158,7 @@
                 Periode: Tidak ada tanggal awal dan akhir yang diteruskan.
             @endif
         </p>
-    
+
         <p class="period right-align" style="font-size: 10px; position: absolute; top: 0; right: 0; margin: 10px;">
             {{ $currentDateTime }}
         </p>
@@ -170,39 +199,46 @@
                     $totalNominalSetoran = 0;
                     $totalPlusMinus = 0;
                 @endphp
-    
-                @foreach($setoranPenjualans as $setoran)
+
+                @foreach ($setoranPenjualans as $setoran)
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($setoran->tanggal_setoran)->format('d-m-Y') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->penjualan_kotor, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->diskon_penjualan, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->penjualan_bersih, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->deposit_keluar, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->deposit_masuk, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->total_penjualan, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->mesin_edc, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->gobiz, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->transfer, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->qris, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->total_setoran, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->nominal_setoran, 0, ',', '.') }}</td>
-                        <td style="text-align: right">{{ number_format($setoran->plus_minus, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->penjualan_kotor, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->diskon_penjualan, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->penjualan_bersih, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->deposit_keluar, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->deposit_masuk, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->total_penjualan, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->mesin_edc1, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->gobiz1, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->transfer1, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->qris1, 0, ',', '.') }}</td>
+                        <td style="text-align: right">
+                            {{ number_format($setoran->setoran_penjualan->total_setoran, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->total_setoran1, 0, ',', '.') }}</td>
+                        <td style="text-align: right">{{ number_format($setoran->totalsetoran_selisih, 0, ',', '.') }}</td>
                     </tr>
-    
+
                     @php
-                        $totalPenjualanKotor += $setoran->penjualan_kotor;
-                        $totalDiskonPenjualan += $setoran->diskon_penjualan;
-                        $totalPenjualanBersih += $setoran->penjualan_bersih;
-                        $totalDepositKeluar += $setoran->deposit_keluar;
-                        $totalDepositMasuk += $setoran->deposit_masuk;
-                        $totalTotalPenjualan += $setoran->total_penjualan;
-                        $totalMesinEDC += $setoran->mesin_edc;
-                        $totalGoBiz += $setoran->gobiz;
-                        $totalTransfer += $setoran->transfer;
-                        $totalQRIS += $setoran->qris;
-                        $totalTotalSetoran += $setoran->total_setoran;
-                        $totalNominalSetoran += $setoran->nominal_setoran;
-                        $totalPlusMinus += $setoran->plus_minus;
+                        $totalPenjualanKotor += $setoran->setoran_penjualan->penjualan_kotor;
+                        $totalDiskonPenjualan += $setoran->setoran_penjualan->diskon_penjualan;
+                        $totalPenjualanBersih += $setoran->setoran_penjualan->penjualan_bersih;
+                        $totalDepositKeluar += $setoran->setoran_penjualan->deposit_keluar;
+                        $totalDepositMasuk += $setoran->setoran_penjualan->deposit_masuk;
+                        $totalTotalPenjualan += $setoran->setoran_penjualan->total_penjualan;
+                        $totalMesinEDC += $setoran->mesin_edc1;
+                        $totalGoBiz += $setoran->gobiz1;
+                        $totalTransfer += $setoran->transfer1;
+                        $totalQRIS += $setoran->qris1;
+                        $totalTotalSetoran += $setoran->setoran_penjualan->total_setoran;
+                        $totalNominalSetoran += $setoran->total_setoran1;
+                        $totalPlusMinus += $setoran->totalsetoran_selisih;
                     @endphp
                 @endforeach
             </tbody>
@@ -228,4 +264,5 @@
     </div>
 
 </body>
+
 </html>

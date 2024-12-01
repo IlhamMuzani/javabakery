@@ -32,14 +32,8 @@
             @endif
 
             @if (session('error'))
-                <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <h5>
-                        <i class="icon fas fa-ban"></i> Gagal!
-                    </h5>
-                    @foreach (session('error') as $error)
-                        - {{ $error }} <br>
-                    @endforeach
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
             <form action="{{ url('admin/setoran_pelunasan') }}" method="POST" enctype="multipart/form-data" id="myForm">
@@ -54,21 +48,15 @@
                                 Kategori Toko
                             </label>
                             <div class="col-sm-3">
-                                <select style="font-size:14px" class="form-control" id="toko_id" name="toko_id"
+                                <select style="font-size:14px" class="form-control" id="kategori" name="kategori"
                                     onchange="filterTabel()">
-                                    <option value="0">- Pilih -</option>
-                                    <option value="3" {{ old('toko_id') == '3' ? 'selected' : null }}>
-                                        Toko Slawi</option>
-                                    <option value="1"{{ old('toko_id') == '1' ? 'selected' : null }}>Toko Benjaran
-                                    </option>
-                                    <option value="2"{{ old('toko_id') == '2' ? 'selected' : null }}>Toko Tegal
-                                    </option>
-                                    <option value="5"{{ old('toko_id') == '5' ? 'selected' : null }}>Toko Bumiayu
-                                    </option>
-                                    <option value="4"{{ old('toko_id') == '4' ? 'selected' : null }}>Toko Pemalang
-                                    </option>
-                                    <option value="6"{{ old('toko_id') == '6' ? 'selected' : null }}>Toko Cilacap
-                                    </option>
+                                    <option value="">- Pilih -</option>
+                                    <option value="3">Toko Slawi</option>
+                                    <option value="1">Toko Benjaran</option>
+                                    <option value="2">Toko Tegal</option>
+                                    <option value="5">Toko Bumiayu</option>
+                                    <option value="4">Toko Pemalang</option>
+                                    <option value="6">Toko Cilacap</option>
                                 </select>
                             </div>
                         </div>
@@ -77,14 +65,9 @@
                                 <a id="" data-toggle="modal" class="text-decoration-none">No. Faktur Penjualan Toko
                                 </a>
                             </label>
-                            <div hidden class="col-sm-3">
-                                <input type="text" id="setoran_penjualan_id" name="setoran_penjualan_id"
-                                    id="setoran_penjualan_id" class="form-control" readonly
-                                    value="{{ old('setoran_penjualan_id') }}" />
-                            </div>
                             <div class="col-sm-3">
                                 <input type="text" id="no_fakturpenjualantoko" name="no_fakturpenjualantoko"
-                                    class="form-control" readonly value="{{ old('no_fakturpenjualantoko') }}" />
+                                    class="form-control" readonly />
                             </div>
                             <button class="btn btn-outline-primary" type="button" id="searchButton"
                                 onclick="showCategoryModalpemesanan()">
@@ -99,7 +82,7 @@
                             </label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="tanggal_penjualan" name="tanggal_penjualan"
-                                    readonly value="{{ old('tanggal_penjualan') }}">
+                                    readonly>
                             </div>
 
                         </div>
@@ -112,7 +95,7 @@
                             </label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="penjualan_kotor" name="penjualan_kotor"
-                                    readonly value="{{ old('penjualan_kotor') }}">
+                                    readonly>
                             </div>
                         </div>
 
@@ -124,7 +107,7 @@
                             </label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="diskon_penjualan" name="diskon_penjualan"
-                                    readonly value="{{ old('diskon_penjualan') }}">
+                                    readonly>
                             </div>
                         </div>
 
@@ -140,7 +123,7 @@
 
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="penjualan_bersih" name="penjualan_bersih"
-                                    readonly value="{{ old('penjualan_bersih') }}">
+                                    readonly>
                             </div>
                         </div>
 
@@ -152,7 +135,7 @@
 
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="deposit_keluar" name="deposit_keluar"
-                                    readonly value="{{ old('deposit_keluar') }}">
+                                    readonly>
                             </div>
                         </div>
 
@@ -164,7 +147,7 @@
 
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="deposit_masuk" name="deposit_masuk"
-                                    readonly value="{{ old('deposit_masuk') }}">
+                                    readonly>
                             </div>
                         </div>
 
@@ -180,16 +163,15 @@
 
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="total_penjualan" name="total_penjualan"
-                                    readonly value="{{ old('total_penjualan') }}">
+                                    readonly>
                             </div>
-                            <div hidden class="col-sm-3">
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" readonly id="total_penjualan1"
-                                    name="total_penjualan1" value="{{ old('total_penjualan1') }}">
+                                    oninput="hitungSetoran()" name="total_penjualan1">
                             </div>
                             <div hidden class="col-sm-3">
                                 <input type="text" class="form-control" id="totalpenjualan_selisih"
-                                    name="totalpenjualan_selisih" placeholder="" readonly
-                                    value="{{ old('totalpenjualan_selisih') }}">
+                                    name="totalpenjualan_selisih" placeholder="" readonly>
                                 <small id="totalpenjualan_keterangan" class="text-muted"></small>
                             </div>
 
@@ -202,16 +184,15 @@
                             </label>
 
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="mesin_edc" name="mesin_edc" readonly
-                                    value="{{ old('mesin_edc') }}">
+                                <input type="text" class="form-control" id="mesin_edc" name="mesin_edc" readonly>
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="mesin_edc1" name="mesin_edc1"
-                                    value="{{ old('mesin_edc1') }}">
+                                    oninput="hitungSetoran()">
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="mesinedc_selisih" name="mesinedc_selisih"
-                                    placeholder="" readonly value="{{ old('mesinedc_selisih') }}">
+                                    placeholder="" readonly>
                                 <small id="mesinedc_keterangan" class="text-muted"></small>
                             </div>
 
@@ -224,16 +205,15 @@
                             </label>
 
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="qris" name="qris" readonly
-                                    value="{{ old('qris') }}">
+                                <input type="text" class="form-control" id="qris" name="qris" readonly>
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="qris1" name="qris1"
-                                    value="{{ old('qris1') }}">
+                                    oninput="hitungSetoran()">
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="qris_selisih" name="qris_selisih"
-                                    placeholder="" readonly value="{{ old('qris_selisih') }}">
+                                    placeholder="" readonly>
                                 <small id="qris_keterangan" class="text-muted"></small>
                             </div>
 
@@ -246,16 +226,15 @@
                             </label>
 
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="gobiz" name="gobiz" readonly
-                                    value="{{ old('gobiz') }}">
+                                <input type="text" class="form-control" id="gobiz" name="gobiz" readonly>
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="gobiz1" name="gobiz1"
-                                    value="{{ old('gobiz1') }}">
+                                    oninput="hitungSetoran()">
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="gobiz_selisih" name="gobiz_selisih"
-                                    value="{{ old('gobiz_selisih') }}" placeholder="" readonly>
+                                    placeholder="" readonly>
                                 <small id="gobiz_keterangan" class="text-muted"></small>
                             </div>
 
@@ -268,19 +247,23 @@
                             </label>
 
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="transfer" name="transfer" readonly
-                                    value="{{ old('transfer') }}">
+                                <input type="text" class="form-control" id="transfer" name="transfer" readonly>
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="transfer1" name="transfer1"
-                                    value="{{ old('transfer1') }}">
+                                    oninput="hitungSetoran()">
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="transfer_selisih" name="transfer_selisih"
-                                    placeholder="" readonly value="{{ old('transfer_selisih') }}">
+                                    placeholder="" readonly>
                                 <small id="transfer_keterangan" class="text-muted"></small>
                             </div>
 
+                        </div>
+
+
+                        <div class="col-sm-3 offset-sm-3">
+                            <hr style="border: 1px solid #000;">
                         </div>
 
                         <div class="form-group row mb-3">
@@ -290,28 +273,23 @@
 
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="total_setoran" name="total_setoran"
-                                    readonly value="{{ old('total_setoran') }}">
+                                    oninput="hitungSetoran()" readonly>
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="total_setoran1" name="total_setoran1"
-                                    value="{{ old('total_setoran1') }}">
+                                    oninput="hitungSetoran()">
                             </div>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="totalsetoran_selisih"
-                                    name="totalsetoran_selisih" placeholder="" readonly
-                                    value="{{ old('totalsetoran_selisih') }}">
+                                    oninput="hitungSetoran()" name="totalsetoran_selisih" placeholder="" readonly>
                                 <small id="totalsetoran_keterangan" class="text-muted"></small>
                             </div>
 
                         </div>
 
                     </div>
-                    <div class="card-footer text-right">
-                        <button type="reset" class="btn btn-secondary" id="btnReset">Reset</button>
-                        <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
-                        <div id="loading" style="display: none;">
-                            <i class="fas fa-spinner fa-spin"></i> Sedang Menyimpan...
-                        </div>
+                    <div class="card-footer text-right mt-3">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </div>
             </form>
@@ -343,8 +321,8 @@
                                 @php $no = 1; @endphp
                                 @foreach ($setoranPenjualans as $item)
                                     <tr data-toko="{{ $item->toko_id }}"
-                                        onclick="getSelectedDataPemesanan('{{ $item->id }}','{{ $item->no_fakturpenjualantoko }}', '{{ $item->penjualan_kotor }}', '{{ $item->diskon_penjualan }}'
-            , '{{ $item->penjualan_bersih }}', '{{ $item->deposit_masuk }}', '{{ $item->deposit_keluar }}', '{{ $item->total_penjualan }}', '{{ $item->mesin_edc }}'
+                                        onclick="getSelectedDataPemesanan('{{ $item->no_fakturpenjualantoko }}', '{{ $item->penjualan_kotor }}', '{{ $item->diskon_penjualan }}'
+            , '{{ $item->penjualan_bersih }}', '{{ $item->deposit_masuk }}', '{{ $item->deposit_keluar }}', '{{ $item->total_penjualan }}', '{{ $item->total_penjualan }}', '{{ $item->mesin_edc }}'
             , '{{ $item->qris }}', '{{ $item->gobiz }}', '{{ $item->transfer }}', '{{ $item->total_setoran }}', '{{ $item->tanggal_penjualan }}')">
                                         <td class="text-center">{{ $no }}</td>
                                         <td>{{ $item->no_fakturpenjualantoko }}</td>
@@ -855,11 +833,9 @@
             return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        function getSelectedDataPemesanan(setoran_penjualan_id, no_fakturpenjualantoko, penjualan_kotor, diskon_penjualan,
-            penjualan_bersih,
+        function getSelectedDataPemesanan(no_fakturpenjualantoko, penjualan_kotor, diskon_penjualan, penjualan_bersih,
             deposit_keluar, deposit_masuk,
-            total_penjualan, mesin_edc, qris, gobiz, transfer, total_setoran, tanggal_penjualan) {
-            document.getElementById('setoran_penjualan_id').value = setoran_penjualan_id;
+            total_penjualan, total_penjualan1, mesin_edc, qris, gobiz, transfer, total_setoran, tanggal_penjualan) {
             document.getElementById('no_fakturpenjualantoko').value = no_fakturpenjualantoko;
             document.getElementById('tanggal_penjualan').value = tanggal_penjualan;
 
@@ -869,6 +845,7 @@
             document.getElementById('deposit_masuk').value = formatRibuan(deposit_masuk);
             document.getElementById('deposit_keluar').value = formatRibuan(deposit_keluar);
             document.getElementById('total_penjualan').value = formatRibuan(total_penjualan);
+            document.getElementById('total_penjualan1').value = formatRibuan(total_penjualan1);
             document.getElementById('mesin_edc').value = formatRibuan(mesin_edc);
             document.getElementById('qris').value = formatRibuan(qris);
             document.getElementById('gobiz').value = formatRibuan(gobiz);
@@ -882,8 +859,8 @@
 
     <script>
         function filterTabel() {
-            // Ambil nilai toko_id yang dipilih
-            const toko_id = document.getElementById('toko_id').value;
+            // Ambil nilai kategori yang dipilih
+            const kategori = document.getElementById('kategori').value;
 
             // Ambil semua baris tabel
             const rows = document.querySelectorAll('#datatables4 tbody tr');
@@ -893,8 +870,8 @@
                 // Ambil nilai toko_id dari atribut data-toko
                 const tokoId = row.getAttribute('data-toko');
 
-                // Tampilkan atau sembunyikan baris berdasarkan nilai toko_id
-                if (toko_id === "" || toko_id == tokoId) {
+                // Tampilkan atau sembunyikan baris berdasarkan nilai kategori
+                if (kategori === "" || kategori == tokoId) {
                     row.style.display = ""; // Tampilkan
                 } else {
                     row.style.display = "none"; // Sembunyikan
@@ -969,18 +946,4 @@
         }
     </script>
 
-    <script>
-        $(document).ready(function() {
-            // Tambahkan event listener pada tombol "Simpan"
-            $('#btnSimpan').click(function() {
-                // Sembunyikan tombol "Simpan" dan "Reset", serta tampilkan elemen loading
-                $(this).hide();
-                $('#btnReset').hide(); // Tambahkan id "btnReset" pada tombol "Reset"
-                $('#loading').show();
-
-                // Lakukan pengiriman formulir
-                $('form').submit();
-            });
-        });
-    </script>
 @endsection

@@ -59,15 +59,17 @@
                     <h3 class="card-title">Setoran Penjualan</h3>
                 </div>
                 <!-- /.card-header -->
-                 
+
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <select class="custom-select form-control" id="status" name="status">
                                     <option value="">- Semua Status -</option>
-                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>Posting</option>
-                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost</option>
+                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>
+                                        Posting</option>
+                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost
+                                    </option>
                                 </select>
                                 <label for="status">(Pilih Status)</label>
                             </div>
@@ -88,15 +90,15 @@
                             </div>
                         </div>
                     </form>
-                    
 
-                   
+
+
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 13px">
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
-                                <th>Tanggal Setoran</th> 
-                                <th>Cabang</th> 
+                                <th>Tanggal Setoran</th>
+                                <th>Cabang</th>
                                 <th>Penjualan Kotor</th>
                                 <th>Diskon Penjualan</th>
                                 <th>Penjualan Bersih</th>
@@ -116,24 +118,25 @@
                         </thead>
                         <tbody>
                             @foreach ($setoranPenjualans as $index => $item)
-                            <tr class="dropdown"{{ $item->id }}>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td>{{ $item->tanggal_setoran ? \Carbon\Carbon::parse($item->tanggal_setoran)->format('d-m-Y') : '-' }}</td> <!-- Menampilkan Tanggal item -->
-                                <td>{{ $item->toko->nama_toko }}</td>
-                                <td>{{ number_format($item->penjualan_kotor, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->diskon_penjualan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->penjualan_bersih, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->deposit_keluar, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->deposit_masuk, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->total_penjualan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->mesin_edc ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->gobiz ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->transfer ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->qris ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->total_setoran, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->nominal_setoran, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->plusminus, 0, ',', '.') }}</td>
-                        
+                                <tr class="dropdown"{{ $item->id }}>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>{{ $item->tanggal_setoran ? \Carbon\Carbon::parse($item->tanggal_setoran)->format('d-m-Y') : '-' }}
+                                    </td> <!-- Menampilkan Tanggal item -->
+                                    <td>{{ $item->toko->nama_toko }}</td>
+                                    <td>{{ number_format($item->penjualan_kotor, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->diskon_penjualan, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->penjualan_bersih, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->deposit_keluar, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->deposit_masuk, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->total_penjualan, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->mesin_edc ?? 0, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->gobiz ?? 0, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->transfer ?? 0, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->qris ?? 0, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->total_setoran, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->nominal_setoran, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->plusminus, 0, ',', '.') }}</td>
+
                                     <td class="text-center">
                                         @if ($item->status == 'posting')
                                             <button type="button" class="btn btn-success btn-sm">
@@ -141,27 +144,35 @@
                                             </button>
                                         @endif
                                         @if ($item->status == 'unpost')
-                                        <button type="button" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         @endif
                                         @if ($item->status == 'approve')
-                                        <button type="button" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                         @endif
-                                     
+
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if ($item->status == 'unpost')
-                                            <a class="dropdown-item posting-btn" data-memo-id="{{ $item->id }}">Posting</a>
-                                                <a class="dropdown-item" href="{{ route('inquery_penjualantoko.print', $item->id) }}" target="_blank">Show</a>  
+                                                <a class="dropdown-item posting-btn"
+                                                    data-memo-id="{{ $item->id }}">Posting</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('admin/inquery_penjualantoko/' . $item->id . '/edit') }}">Update</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('inquery_penjualantoko.print', $item->id) }}"
+                                                    target="_blank">Show</a>
                                             @endif
 
                                             @if ($item->status == 'posting')
-                                                <a class="dropdown-item unpost-btn" data-memo-id="{{ $item->id }}">Unpost</a>
-                                                <a class="dropdown-item" href="{{ route('inquery_penjualantoko.print', $item->id) }}" target="_blank">Show</a>
+                                                <a class="dropdown-item unpost-btn"
+                                                    data-memo-id="{{ $item->id }}">Unpost</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('inquery_penjualantoko.print', $item->id) }}"
+                                                    target="_blank">Show</a>
                                             @endif
-                                           
+
                                         </div>
                                     </td>
                                 </tr>
@@ -189,7 +200,7 @@
     <script>
         var tanggalAwal = document.getElementById('tanggal_setoran');
         var tanggalAkhir = document.getElementById('tanggal_akhir');
-    
+
         tanggalAwal.addEventListener('change', function() {
             if (this.value == "") {
                 tanggalAkhir.value = ""; // Reset tanggal akhir jika tanggal awal kosong
@@ -201,9 +212,9 @@
                 tanggalAkhir.value = today >= this.value ? today : this.value; // Set nilai tanggal akhir
             }
         });
-    
+
         var form = document.getElementById('form-action');
-    
+
         function cari() {
             form.action = "{{ url('admin/inquery_penjualantoko') }}";
             form.submit();
@@ -268,85 +279,87 @@
     </script>
 
 
-<script>
-    $(document).ready(function() {
-        $('.unpost-btn').click(function() {
-            var memoId = $(this).data('memo-id');
-            $(this).addClass('disabled');
+    <script>
+        $(document).ready(function() {
+            $('.unpost-btn').click(function() {
+                var memoId = $(this).data('memo-id');
+                $(this).addClass('disabled');
 
-            // Tampilkan modal loading saat permintaan AJAX diproses
-            $('#modal-loading').modal('show');
+                // Tampilkan modal loading saat permintaan AJAX diproses
+                $('#modal-loading').modal('show');
 
-            // Kirim permintaan AJAX untuk melakukan unpost
-            $.ajax({
-                url: "{{ url('admin/inquery_penjualantoko/unpost_penjualantoko/') }}/" + memoId,
-                type: 'GET',
-                data: {
-                    id: memoId
-                },
-                success: function(response) {
-                    // Sembunyikan modal loading setelah permintaan selesai
-                    $('#modal-loading').modal('hide');
+                // Kirim permintaan AJAX untuk melakukan unpost
+                $.ajax({
+                    url: "{{ url('admin/inquery_penjualantoko/unpost_penjualantoko/') }}/" +
+                        memoId,
+                    type: 'GET',
+                    data: {
+                        id: memoId
+                    },
+                    success: function(response) {
+                        // Sembunyikan modal loading setelah permintaan selesai
+                        $('#modal-loading').modal('hide');
 
-                    // Tampilkan pesan sukses atau lakukan tindakan lain sesuai kebutuhan
-                    console.log(response);
+                        // Tampilkan pesan sukses atau lakukan tindakan lain sesuai kebutuhan
+                        console.log(response);
 
-                    // Tutup modal setelah berhasil unpost
-                    $('#modal-posting-' + memoId).modal('hide');
+                        // Tutup modal setelah berhasil unpost
+                        $('#modal-posting-' + memoId).modal('hide');
 
-                    // Reload the page to refresh the table
-                    location.reload();
-                },
-                error: function(error) {
-                    // Sembunyikan modal loading setelah permintaan selesai
-                    $('#modal-loading').modal('hide');
+                        // Reload the page to refresh the table
+                        location.reload();
+                    },
+                    error: function(error) {
+                        // Sembunyikan modal loading setelah permintaan selesai
+                        $('#modal-loading').modal('hide');
 
-                    // Tampilkan pesan error atau lakukan tindakan lain sesuai kebutuhan
-                    console.log(error);
-                }
+                        // Tampilkan pesan error atau lakukan tindakan lain sesuai kebutuhan
+                        console.log(error);
+                    }
+                });
             });
         });
-    });
-</script>
-{{-- posting memo --}}
-<script>
-    $(document).ready(function() {
-        $('.posting-btn').click(function() {
-            var memoId = $(this).data('memo-id');
-            $(this).addClass('disabled');
+    </script>
+    {{-- posting memo --}}
+    <script>
+        $(document).ready(function() {
+            $('.posting-btn').click(function() {
+                var memoId = $(this).data('memo-id');
+                $(this).addClass('disabled');
 
-            // Tampilkan modal loading saat permintaan AJAX diproses
-            $('#modal-loading').modal('show');
+                // Tampilkan modal loading saat permintaan AJAX diproses
+                $('#modal-loading').modal('show');
 
-            // Kirim permintaan AJAX untuk melakukan posting
-            $.ajax({
-                url: "{{ url('admin/inquery_penjualantoko/posting_penjualantoko/') }}/" + memoId,
-                type: 'GET',
-                data: {
-                    id: memoId
-                },
-                success: function(response) {
-                    // Sembunyikan modal loading setelah permintaan selesai
-                    $('#modal-loading').modal('hide');
+                // Kirim permintaan AJAX untuk melakukan posting
+                $.ajax({
+                    url: "{{ url('admin/inquery_penjualantoko/posting_penjualantoko/') }}/" +
+                        memoId,
+                    type: 'GET',
+                    data: {
+                        id: memoId
+                    },
+                    success: function(response) {
+                        // Sembunyikan modal loading setelah permintaan selesai
+                        $('#modal-loading').modal('hide');
 
-                    // Tampilkan pesan sukses atau lakukan tindakan lain sesuai kebutuhan
-                    console.log(response);
+                        // Tampilkan pesan sukses atau lakukan tindakan lain sesuai kebutuhan
+                        console.log(response);
 
-                    // Tutup modal setelah berhasil posting
-                    $('#modal-posting-' + memoId).modal('hide');
+                        // Tutup modal setelah berhasil posting
+                        $('#modal-posting-' + memoId).modal('hide');
 
-                    // Reload the page to refresh the table
-                    location.reload();
-                },
-                error: function(error) {
-                    // Sembunyikan modal loading setelah permintaan selesai
-                    $('#modal-loading').modal('hide');
+                        // Reload the page to refresh the table
+                        location.reload();
+                    },
+                    error: function(error) {
+                        // Sembunyikan modal loading setelah permintaan selesai
+                        $('#modal-loading').modal('hide');
 
-                    // Tampilkan pesan error atau lakukan tindakan lain sesuai kebutuhan
-                    console.log(error);
-                }
+                        // Tampilkan pesan error atau lakukan tindakan lain sesuai kebutuhan
+                        console.log(error);
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 @endsection

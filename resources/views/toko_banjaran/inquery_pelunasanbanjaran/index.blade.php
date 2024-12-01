@@ -59,15 +59,17 @@
                     <h3 class="card-title">Pelunasan Pemesanan</h3>
                 </div>
                 <!-- /.card-header -->
-                 
+
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <select class="custom-select form-control" id="status" name="status">
                                     <option value="">- Semua Status -</option>
-                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>Posting</option>
-                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost</option>
+                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>
+                                        Posting</option>
+                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost
+                                    </option>
                                 </select>
                                 <label for="status">(Pilih Status)</label>
                             </div>
@@ -88,9 +90,9 @@
                             </div>
                         </div>
                     </form>
-                    
 
-                   
+
+
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 13px">
                         <thead class="">
                             <tr>
@@ -120,7 +122,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($item->metodePembayaran)
+                                        @if ($item->metodePembayaran)
                                             {{ $item->metodePembayaran->nama_metode }}
                                         @else
                                             Tunai
@@ -128,7 +130,7 @@
                                     </td>
                                     <td>
                                         @if ($item->pelunasan == 1)
-                                        {{ number_format($item->dppemesanan->dp_pemesanan , 0, ',', '.') }}
+                                            {{ number_format($item->dppemesanan->dp_pemesanan, 0, ',', '.') }}
                                             {{-- {{ $item->dppemesanan->dp_pemesanan ?? 'Data tidak tersedia' }} --}}
                                         @else
                                             {{ number_format($item->pelunasan, 0, ',', '.') }}
@@ -148,24 +150,32 @@
                                         @endif
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if ($item->status == 'unpost')
-                                                <a class="dropdown-item posting-btn" data-memo-id="{{ $item->id }}">Posting</a>
-                                                <a class="dropdown-item" href="{{ url('/toko_banjaran/pelunasan_pemesanan/' . $item->id ) }}">Show</a>
-                                                <form action="{{ route('penjualan_produk.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                <a class="dropdown-item posting-btn"
+                                                    data-memo-id="{{ $item->id }}">Posting</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('toko_banjaran/inquery_pelunasanbanjaran/' . $item->id . '/edit') }}">Update</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_banjaran/pelunasan_pemesanan/' . $item->id) }}">Show</a>
+                                                <form action="{{ route('penjualan_produk.destroy', $item->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item">Delete</button>
                                                 </form>
                                             @endif
                                             @if ($item->status == 'posting')
-                                                <a class="dropdown-item unpost-btn" data-memo-id="{{ $item->id }}">Unpost</a>
-                                                <a class="dropdown-item" href="{{ url('/toko_banjaran/pelunasan_pemesanan/' . $item->id ) }}">Show</a>
+                                                <a class="dropdown-item unpost-btn"
+                                                    data-memo-id="{{ $item->id }}">Unpost</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_banjaran/pelunasan_pemesanan/' . $item->id) }}">Show</a>
                                             @endif
                                         </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
-                        
+
                     </table>
                     <!-- Modal Loading -->
                     <div class="modal fade" id="modal-loading" tabindex="-1" role="dialog"
@@ -188,12 +198,12 @@
     <script>
         var tanggalAwal = document.getElementById('tanggal_pelunasan');
         var tanggalAkhir = document.getElementById('tanggal_akhir');
-    
+
         // Jika tanggalAwal kosong, tanggalAkhir tidak bisa diisi
         if (tanggalAwal.value == "") {
             tanggalAkhir.readOnly = true;
         }
-    
+
         // Event Listener untuk tanggalAwal (dari tanggal)
         tanggalAwal.addEventListener('change', function() {
             if (this.value == "") {
@@ -201,14 +211,14 @@
             } else {
                 tanggalAkhir.readOnly = false; // Enable input tanggalAkhir
             }
-    
+
             // Reset nilai tanggalAkhir dan set batas minimalnya
             tanggalAkhir.value = "";
             var today = new Date().toISOString().split('T')[0]; // Tanggal hari ini
             tanggalAkhir.value = today; // Set default ke hari ini
             tanggalAkhir.setAttribute('min', this.value); // Set tanggalAkhir minimum sesuai tanggalAwal
         });
-    
+
         // Fungsi untuk mengirim form
         function cari() {
             var form = document.getElementById('form-action');
@@ -216,7 +226,7 @@
             form.submit();
         }
     </script>
-    
+
 
     {{-- unpost memo  --}}
     <script>
@@ -230,7 +240,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan unpost
                 $.ajax({
-                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/unpost_penjualanproduk/') }}/" + memoId,
+                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/unpost_penjualanproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId
@@ -271,7 +282,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan posting
                 $.ajax({
-                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/posting_penjualanproduk/') }}/" + memoId,
+                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/posting_penjualanproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId

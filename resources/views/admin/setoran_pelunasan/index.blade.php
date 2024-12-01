@@ -59,13 +59,13 @@
                 <div class="card-header">
                     <div class="float-right">
                         <a href="{{ url('admin/setoran_pelunasan/create') }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> 
+                            <i class="fas fa-plus"></i>
                         </a>
                     </div>
-       
+
                     {{-- <h3 class="card-title">Laporan Setoran Pelunasan</h3> --}}
                 </div>
-                 
+
                 <div class="card-body">
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 10px">
                         <thead>
@@ -83,27 +83,28 @@
                                 <th>Transfer</th>
                                 <th>Qris</th>
                                 <th>Total Setoran</th>
-                                
+
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($setoranPenjualans as $index => $setoran)
-                            <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td>{{ $setoran->tanggal_setoran ? \Carbon\Carbon::parse($setoran->tanggal_setoran)->format('d-m-Y') : '-' }}</td> <!-- Menampilkan Tanggal Setoran -->
-                                <td>{{ $setoran->penjualan_kotor1 }}</td>
-                                <td>{{ $setoran->diskon_penjualan1 }}</td>
-                                <td>{{ $setoran->penjualan_bersih1 }}</td>
-                                <td>{{ $setoran->deposit_keluar1 }}</td>
-                                <td>{{ $setoran->deposit_masuk1 }}</td>
-                                <td>{{ $setoran->total_penjualan1 }}</td>
-                                <td>{{ $setoran->mesin_edc1 ?? '0' }}</td>
-                                <td>{{ $setoran->gobiz1 ?? '0' }}</td>
-                                <td>{{ $setoran->transfer1 ?? '0' }}</td>
-                                <td>{{ $setoran->qris1 ?? '0' }}</td>
-                                <td>{{ $setoran->total_setoran1 }}</td>
-                             
-                            </tr>
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>{{ $setoran->tanggal_setoran ? \Carbon\Carbon::parse($setoran->tanggal_setoran)->format('d-m-Y') : '-' }}
+                                    </td> <!-- Menampilkan Tanggal Setoran -->
+                                    <td>{{ $setoran->penjualan_kotor1 }}</td>
+                                    <td>{{ $setoran->diskon_penjualan1 }}</td>
+                                    <td>{{ $setoran->penjualan_bersih1 }}</td>
+                                    <td>{{ $setoran->deposit_keluar1 }}</td>
+                                    <td>{{ $setoran->deposit_masuk1 }}</td>
+                                    <td>{{ $setoran->total_penjualan1 }}</td>
+                                    <td>{{ $setoran->mesin_edc1 ?? '0' }}</td>
+                                    <td>{{ $setoran->gobiz1 ?? '0' }}</td>
+                                    <td>{{ $setoran->transfer1 ?? '0' }}</td>
+                                    <td>{{ $setoran->qris1 ?? '0' }}</td>
+                                    <td>{{ $setoran->total_setoran1 }}</td>
+
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -152,45 +153,44 @@
         }
     </script>
 
-<script>
-    function printReport() {
-    const form = document.getElementById('form-action');
-    form.action = "{{ url('admin/printReportsetoran') }}";
-    form.target = "_blank";
-    form.submit();
-}
-
-</script>
-
-<script>
-    document.getElementById('kategori1').addEventListener('change', function() {
-        var selectedValue = this.value;
-
-        if (selectedValue === 'global') {
-            window.location.href = "{{ url('admin/indexglobal') }}";
-        } else if (selectedValue === 'rinci') {
-            window.location.href = "{{ url('admin/laporan_penjualanproduk') }}";
+    <script>
+        function printReport() {
+            const form = document.getElementById('form-action');
+            form.action = "{{ url('admin/printReportsetoran') }}";
+            form.target = "_blank";
+            form.submit();
         }
-    });
-</script>
+    </script>
 
-<script>
-    function filterProduk() {
-        var klasifikasiId = document.getElementById('klasifikasi').value;
-        var produkSelect = document.getElementById('produk');
-        var produkOptions = produkSelect.options;
-    
-        for (var i = 0; i < produkOptions.length; i++) {
-            var option = produkOptions[i];
-            if (klasifikasiId === "" || option.getAttribute('data-klasifikasi') == klasifikasiId) {
-                option.style.display = "block";
-            } else {
-                option.style.display = "none";
+    <script>
+        document.getElementById('kategori1').addEventListener('change', function() {
+            var selectedValue = this.value;
+
+            if (selectedValue === 'global') {
+                window.location.href = "{{ url('admin/indexglobal') }}";
+            } else if (selectedValue === 'rinci') {
+                window.location.href = "{{ url('admin/laporan_penjualanproduk') }}";
             }
+        });
+    </script>
+
+    <script>
+        function filterProduk() {
+            var klasifikasiId = document.getElementById('klasifikasi').value;
+            var produkSelect = document.getElementById('produk');
+            var produkOptions = produkSelect.options;
+
+            for (var i = 0; i < produkOptions.length; i++) {
+                var option = produkOptions[i];
+                if (klasifikasiId === "" || option.getAttribute('data-klasifikasi') == klasifikasiId) {
+                    option.style.display = "block";
+                } else {
+                    option.style.display = "none";
+                }
+            }
+
+            // Reset the selected value of the product select box
+            produkSelect.selectedIndex = 0;
         }
-    
-        // Reset the selected value of the product select box
-        produkSelect.selectedIndex = 0;
-    }
     </script>
 @endsection

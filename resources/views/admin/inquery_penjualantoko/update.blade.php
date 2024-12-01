@@ -1,21 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Setoran')
+@section('title', 'Penjualan Toko')
 
 @section('content')
-
-    <style>
-        .custom-checkbox {
-            margin-right: 10px;
-            /* Atur nilai sesuai kebutuhan */
-        }
-    </style>
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Pelunasan Penjualan</h1>
+                    <h1 class="m-0">Penjualan Toko</h1>
                 </div><!-- /.col -->
 
             </div><!-- /.row -->
@@ -32,99 +25,72 @@
             @endif
 
             @if (session('error'))
-                <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <h5>
-                        <i class="icon fas fa-ban"></i> Gagal!
-                    </h5>
-                    @foreach (session('error') as $error)
-                        - {{ $error }} <br>
-                    @endforeach
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
-            <form action="{{ url('admin/setoran_pelunasan') }}" method="POST" enctype="multipart/form-data" id="myForm">
+
+
+            <form action="{{ url('admin/inquery_penjualantoko/' . $penjualan->id) }}" method="POST" autocomplete="off">
                 @csrf
+                @method('put')
                 <div class="card">
-                </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <input class="form-control" id="tanggal_penjualan" name="tanggal_penjualan" type="date"
+                                    value="{{ \Carbon\Carbon::parse(Request::get('tanggal_penjualan', $penjualan->tanggal_setoran))->format('Y-m-d') }}"
+                                    onchange="updateModalLink()" />
+                                <label for="tanggal_penjualan">(Tanggal Penjualan)</label>
 
-                <div class="card">
-                    <div class="ml-3 mt-3 mr-3">
-                        <div class="form-group row mb-3">
-                            <label for="penjualan_kotor" class="col-sm-3 col-form-label">
-                                Kategori Toko
-                            </label>
-                            <div class="col-sm-3">
-                                <select style="font-size:14px" class="form-control" id="toko_id" name="toko_id"
-                                    onchange="filterTabel()">
-                                    <option value="0">- Pilih -</option>
-                                    <option value="3" {{ old('toko_id') == '3' ? 'selected' : null }}>
-                                        Toko Slawi</option>
-                                    <option value="1"{{ old('toko_id') == '1' ? 'selected' : null }}>Toko Benjaran
-                                    </option>
-                                    <option value="2"{{ old('toko_id') == '2' ? 'selected' : null }}>Toko Tegal
-                                    </option>
-                                    <option value="5"{{ old('toko_id') == '5' ? 'selected' : null }}>Toko Bumiayu
-                                    </option>
-                                    <option value="4"{{ old('toko_id') == '4' ? 'selected' : null }}>Toko Pemalang
-                                    </option>
-                                    <option value="6"{{ old('toko_id') == '6' ? 'selected' : null }}>Toko Cilacap
-                                    </option>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <select class="custom-select form-control" id="toko" name="toko_id"
+                                    onchange="updateModalLink()">
+                                    <option value="">- Semua Toko -</option>
+                                    @foreach ($tokos as $toko)
+                                        <option value="{{ $toko->id }}"
+                                            {{ Request::get('toko_id', $penjualan->toko_id) == $toko->id ? 'selected' : '' }}>
+                                            {{ $toko->nama_toko }}</option>
+                                    @endforeach
                                 </select>
+                                <label for="toko_id">(Pilih Toko)</label>
+
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button type="button" id="btnCari" class="btn btn-outline-primary">Cari</button>
                             </div>
                         </div>
-                        <div class="form-group row mb-3">
-                            <label for="penjualan_kotor" class="col-sm-3 col-form-label">
-                                <a id="" data-toggle="modal" class="text-decoration-none">No. Faktur Penjualan Toko
-                                </a>
-                            </label>
-                            <div hidden class="col-sm-3">
-                                <input type="text" id="setoran_penjualan_id" name="setoran_penjualan_id"
-                                    id="setoran_penjualan_id" class="form-control" readonly
-                                    value="{{ old('setoran_penjualan_id') }}" />
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" id="no_fakturpenjualantoko" name="no_fakturpenjualantoko"
-                                    class="form-control" readonly value="{{ old('no_fakturpenjualantoko') }}" />
-                            </div>
-                            <button class="btn btn-outline-primary" type="button" id="searchButton"
-                                onclick="showCategoryModalpemesanan()">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-
-                        <input type="text" id="setoran_id" name="id" class="form-control" hidden />
-                        <div class="form-group row mb-3">
-                            <label for="tanggal_setoran" class="col-sm-3 col-form-label">
-                                <a class="text-decoration-none">Tanggal Penjualan</a>
-                            </label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="tanggal_penjualan" name="tanggal_penjualan"
-                                    readonly value="{{ old('tanggal_penjualan') }}">
-                            </div>
-
-                        </div>
+                    </div>
 
 
+                    <div class="card-body">
+
+                        {{-- <input type="text" id="toko_id" name="toko_id" class="form-control" /> --}}
+
+                        <!-- Tempat untuk menampilkan Penjualan Kotor -->
                         <div class="form-group row mb-3">
                             <label for="penjualan_kotor" class="col-sm-3 col-form-label">
                                 <a id="penjualan_kotor_link" href="#" data-toggle="modal"
                                     data-target="#penjualanKotorModal" class="text-decoration-none">Penjualan Kotor</a>
                             </label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="penjualan_kotor" name="penjualan_kotor"
-                                    readonly value="{{ old('penjualan_kotor') }}">
+                                <input type="text" class="form-control format-rupiah" id="penjualan_kotor"
+                                    name="penjualan_kotor" readonly
+                                    value="{{ old('penjualan_kotor', $penjualan->penjualan_kotor) }}">
                             </div>
                         </div>
 
-
+                        <!-- Diskon Penjualan -->
                         <div class="form-group row mb-3">
                             <label for="diskon_penjualan" class="col-sm-3 col-form-label">
                                 <a id="penjualan_kotor_link" href="#" data-toggle="modal"
                                     data-target="#penjualanKotorModal" class="text-decoration-none">Diskon Penjualan</a>
                             </label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="diskon_penjualan" name="diskon_penjualan"
-                                    readonly value="{{ old('diskon_penjualan') }}">
+                                <input type="text" class="form-control format-rupiah" id="diskon_penjualan"
+                                    name="diskon_penjualan" readonly
+                                    value="{{ old('diskon_penjualan', $penjualan->diskon_penjualan) }}">
                             </div>
                         </div>
 
@@ -132,15 +98,16 @@
                             <hr style="border: 1px solid #000;"> <!-- Ubah nilai 2px sesuai ketebalan yang diinginkan -->
                         </div>
 
+                        <!-- Penjualan Bersih -->
                         <div class="form-group row mb-3">
                             <label for="penjualan_bersih" class="col-sm-3 col-form-label">
                                 <a id="penjualan_kotor_link" href="#" data-toggle="modal"
                                     data-target="#penjualanKotorModal" class="text-decoration-none">Penjualan Bersih</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="penjualan_bersih" name="penjualan_bersih"
-                                    readonly value="{{ old('penjualan_bersih') }}">
+                                <input type="text" class="form-control format-rupiah" id="penjualan_bersih"
+                                    name="penjualan_bersih" readonly
+                                    value="{{ old('penjualan_bersih', $penjualan->penjualan_bersih) }}">
                             </div>
                         </div>
 
@@ -149,10 +116,10 @@
                                 <a id="deposit_keluar_link" href="#" data-toggle="modal"
                                     data-target="#depositKeluarModal" class="text-decoration-none">Deposit Keluar</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="deposit_keluar" name="deposit_keluar"
-                                    readonly value="{{ old('deposit_keluar') }}">
+                                <input type="text" class="form-control format-rupiah" id="deposit_keluar"
+                                    name="deposit_keluar" readonly
+                                    value="{{ old('deposit_keluar', $penjualan->deposit_keluar) }}">
                             </div>
                         </div>
 
@@ -161,10 +128,10 @@
                                 <a id="deposit_masuk_link" href="#" data-toggle="modal"
                                     data-target="#depositMasukModal" class="text-decoration-none">Deposit Masuk</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="deposit_masuk" name="deposit_masuk"
-                                    readonly value="{{ old('deposit_masuk') }}">
+                                <input type="text" class="form-control format-rupiah" id="deposit_masuk"
+                                    name="deposit_masuk" readonly
+                                    value="{{ old('deposit_masuk', $penjualan->deposit_masuk) }}">
                             </div>
                         </div>
 
@@ -177,22 +144,11 @@
                                 <a id="penjualan_kotor_link" href="#" data-toggle="modal"
                                     data-target="#penjualanKotorModal" class="text-decoration-none">Total Penjualan</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="total_penjualan" name="total_penjualan"
-                                    readonly value="{{ old('total_penjualan') }}">
+                                <input type="text" class="form-control format-rupiah" id="total_penjualan"
+                                    name="total_penjualan" readonly
+                                    value="{{ old('total_penjualan', $penjualan->total_penjualan) }}">
                             </div>
-                            <div hidden class="col-sm-3">
-                                <input type="text" class="form-control" readonly id="total_penjualan1"
-                                    name="total_penjualan1" value="{{ old('total_penjualan1') }}">
-                            </div>
-                            <div hidden class="col-sm-3">
-                                <input type="text" class="form-control" id="totalpenjualan_selisih"
-                                    name="totalpenjualan_selisih" placeholder="" readonly
-                                    value="{{ old('totalpenjualan_selisih') }}">
-                                <small id="totalpenjualan_keterangan" class="text-muted"></small>
-                            </div>
-
                         </div>
 
                         <div class="form-group row mb-3">
@@ -200,21 +156,10 @@
                                 <a id="penjualan_mesinedc_link" href="#" data-toggle="modal"
                                     data-target="#penjualanMesinedcModal" class="text-decoration-none">Mesin EDC</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="mesin_edc" name="mesin_edc" readonly
-                                    value="{{ old('mesin_edc') }}">
+                                <input type="text" class="form-control format-rupiah" id="mesin_edc" name="mesin_edc"
+                                    readonly value="{{ old('mesin_edc', $penjualan->mesin_edc) }}">
                             </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="mesin_edc1" name="mesin_edc1"
-                                    value="{{ old('mesin_edc1') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="mesinedc_selisih" name="mesinedc_selisih"
-                                    placeholder="" readonly value="{{ old('mesinedc_selisih') }}">
-                                <small id="mesinedc_keterangan" class="text-muted"></small>
-                            </div>
-
                         </div>
 
                         <div class="form-group row mb-3">
@@ -222,21 +167,10 @@
                                 <a id="penjualan_qris_link" href="#" data-toggle="modal"
                                     data-target="#penjualanQrisModal" class="text-decoration-none">Qris</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="qris" name="qris" readonly
-                                    value="{{ old('qris') }}">
+                                <input type="text" class="form-control format-rupiah" id="qris" name="qris"
+                                    readonly value="{{ old('qris', $penjualan->qris) }}">
                             </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="qris1" name="qris1"
-                                    value="{{ old('qris1') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="qris_selisih" name="qris_selisih"
-                                    placeholder="" readonly value="{{ old('qris_selisih') }}">
-                                <small id="qris_keterangan" class="text-muted"></small>
-                            </div>
-
                         </div>
 
                         <div class="form-group row mb-3">
@@ -244,21 +178,10 @@
                                 <a id="penjualan_gobiz_link" href="#" data-toggle="modal"
                                     data-target="#penjualanGobizModal" class="text-decoration-none">Gobiz</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="gobiz" name="gobiz" readonly
-                                    value="{{ old('gobiz') }}">
+                                <input type="text" class="form-control format-rupiah" id="gobiz" name="gobiz"
+                                    readonly value="{{ old('gobiz', $penjualan->gobiz) }}">
                             </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="gobiz1" name="gobiz1"
-                                    value="{{ old('gobiz1') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="gobiz_selisih" name="gobiz_selisih"
-                                    value="{{ old('gobiz_selisih') }}" placeholder="" readonly>
-                                <small id="gobiz_keterangan" class="text-muted"></small>
-                            </div>
-
                         </div>
 
                         <div class="form-group row mb-3">
@@ -266,45 +189,27 @@
                                 <a id="penjualan_transfer_link" href="#" data-toggle="modal"
                                     data-target="#penjualanTransferModal" class="text-decoration-none">Transfer</a>
                             </label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control format-rupiah" id="transfer" name="transfer"
+                                    readonly value="{{ old('transfer', $penjualan->transfer) }}">
+                            </div>
+                        </div>
 
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="transfer" name="transfer" readonly
-                                    value="{{ old('transfer') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="transfer1" name="transfer1"
-                                    value="{{ old('transfer1') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="transfer_selisih" name="transfer_selisih"
-                                    placeholder="" readonly value="{{ old('transfer_selisih') }}">
-                                <small id="transfer_keterangan" class="text-muted"></small>
-                            </div>
-
+                        <div class="col-sm-3 offset-sm-3">
+                            <hr style="border: 1px solid #000;"> <!-- Ubah nilai 2px sesuai ketebalan yang diinginkan -->
                         </div>
 
                         <div class="form-group row mb-3">
                             <label for="total_setoran" class="col-sm-3 col-form-label">
-                                <a class="text-decoration-none">Setoran Tunai</a>
+                                <a href="{{ url('link-yang-dituju') }}" target="_blank"
+                                    class="text-decoration-none">Total Setoran</a>
                             </label>
-
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="total_setoran" name="total_setoran"
-                                    readonly value="{{ old('total_setoran') }}">
+                                <input type="text" class="form-control format-rupiah" id="total_setoran"
+                                    name="total_setoran" readonly
+                                    value="{{ old('total_setoran', $penjualan->total_setoran) }}">
                             </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="total_setoran1" name="total_setoran1"
-                                    value="{{ old('total_setoran1') }}">
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="totalsetoran_selisih"
-                                    name="totalsetoran_selisih" placeholder="" readonly
-                                    value="{{ old('totalsetoran_selisih') }}">
-                                <small id="totalsetoran_keterangan" class="text-muted"></small>
-                            </div>
-
                         </div>
-
                     </div>
                     <div class="card-footer text-right">
                         <button type="reset" class="btn btn-secondary" id="btnReset">Reset</button>
@@ -316,56 +221,7 @@
                 </div>
             </form>
         </div>
-
-        </div>
-
-        <div class="modal fade" id="tableMarketing" data-backdrop="static">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Data Pelunasan Penjualan</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <table id="datatables4" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th>No. Faktur</th>
-                                    <th>Tanggal Penjualan</th>
-                                    <th>Opsi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php $no = 1; @endphp
-                                @foreach ($setoranPenjualans as $item)
-                                    <tr data-toko="{{ $item->toko_id }}"
-                                        onclick="getSelectedDataPemesanan('{{ $item->id }}','{{ $item->no_fakturpenjualantoko }}', '{{ $item->penjualan_kotor }}', '{{ $item->diskon_penjualan }}'
-            , '{{ $item->penjualan_bersih }}', '{{ $item->deposit_masuk }}', '{{ $item->deposit_keluar }}', '{{ $item->total_penjualan }}', '{{ $item->mesin_edc }}'
-            , '{{ $item->qris }}', '{{ $item->gobiz }}', '{{ $item->transfer }}', '{{ $item->total_setoran }}', '{{ $item->tanggal_penjualan }}')">
-                                        <td class="text-center">{{ $no }}</td>
-                                        <td>{{ $item->no_fakturpenjualantoko }}</td>
-                                        <td>{{ $item->tanggal_penjualan }}</td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    @php $no++; @endphp
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
+        <!-- Modal -->
         <div class="modal fade" id="penjualanKotorModal" tabindex="-1" role="dialog"
             aria-labelledby="penjualanKotorModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -536,7 +392,6 @@
 
     </section>
 
-
     <script>
         // Fungsi untuk memperbarui URL link di dalam modal
         function updateModalLink() {
@@ -682,12 +537,76 @@
         });
     </script>
 
+    <script>
+        document.getElementById('tambahInputCheckbox').addEventListener('change', function() {
+            const extraRowsContainer = document.getElementById('extraRows');
 
+            if (this.checked) {
+                // Buat elemen input tambahan
+                const newRow1 = document.createElement('div');
+                newRow1.className = 'form-group row mb-3';
+                newRow1.innerHTML = `
+                    <div class="col-sm-3">
+                        <input class="form-control" name="tanggal_setoran2" type="date">
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" name="nominal_setoran2" oninput="formatNumber(this); updatePlusMinus();">
+                    </div>
+                `;
 
+                // Tambahkan kedua row ke container
+                extraRowsContainer.appendChild(newRow1);
+            } else {
+                // Hapus semua input tambahan jika checkbox di-uncheck
+                extraRowsContainer.innerHTML = '';
+            }
+        });
+
+        // Fungsi untuk menghapus format angka
+        function unformatNumber(number) {
+            // Hapus semua titik dan ganti koma dengan titik
+            number = number.replace(/\./g, '').replace(',', '.');
+
+            // Cek jika ada lebih dari satu titik setelah dihapus
+            const parts = number.split('.');
+            if (parts.length > 2) {
+                return 0; // Mengembalikan 0 jika terdapat lebih dari satu titik
+            }
+
+            return parseFloat(number) || 0;
+        }
+
+        // Fungsi untuk memformat angka dengan pemisah ribuan
+        function formatNumber(input) {
+            let value = input.value.replace(/\./g, ''); // Hapus titik sebelumnya
+            if (!isNaN(value) && value !== "") {
+                input.value = new Intl.NumberFormat('id-ID').format(value);
+            }
+        }
+
+        // Fungsi untuk menghitung nilai plus/minus
+        function updatePlusMinus() {
+            const totalSetoran = unformatNumber(document.getElementById('total_setoran').value);
+            let totalNominalSetoran = 0;
+
+            // Ambil semua input nominal_setoran dan hitung totalnya
+            const nominalInputs = document.querySelectorAll('input[name^="nominal_setoran"]');
+            nominalInputs.forEach(input => {
+                totalNominalSetoran += unformatNumber(input.value);
+            });
+
+            // Hitung selisih antara total setoran dan total nominal setoran
+            const plusMinus = totalNominalSetoran - totalSetoran;
+
+            // Update nilai plusminus dengan format yang benar
+            document.getElementById('plusminus').value = new Intl.NumberFormat('id-ID').format(plusMinus);
+        }
+    </script>
 
 
     <!-- Tambahkan script JQuery untuk Ajax -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <script>
         $(document).ready(function() {
@@ -697,18 +616,15 @@
 
                 if (tanggalPenjualan) {
                     $.ajax({
-                        url: "{{ url('admin/get-penjualan1') }}", // Sesuaikan URL sesuai rute Anda
+                        url: "{{ url('admin/get-penjualan') }}", // Sesuaikan URL sesuai dengan rute Anda
                         type: "POST",
                         data: {
                             _token: '{{ csrf_token() }}',
                             tanggal_penjualan: tanggalPenjualan,
-                            toko_id: tokoId // Kirim toko_id
+                            toko_id: tokoId
                         },
                         success: function(response) {
                             // Isi field-form dengan data dari respons
-                            $('#setoran_id').val(response.id);
-                            $('#tanggal_setoran').val(response.tanggal_setoran);
-                            $('#no_fakturpenjualantoko').val(response.no_fakturpenjualantoko);
                             $('#penjualan_kotor').val(response.penjualan_kotor);
                             $('#diskon_penjualan').val(response.diskon_penjualan);
                             $('#penjualan_bersih').val(response.penjualan_bersih);
@@ -720,8 +636,6 @@
                             $('#transfer').val(response.transfer);
                             $('#total_penjualan').val(response.total_penjualan);
                             $('#total_setoran').val(response.total_setoran);
-                            $('#nominal_setoran').val(response.nominal_setoran);
-                            $('#plusminus').val(response.plusminus);
                         },
                         error: function(xhr) {
                             console.log(xhr.responseText); // Untuk debugging
@@ -734,6 +648,23 @@
         });
     </script>
 
+
+
+    <script>
+        $(document).ready(function() {
+            // Tambahkan event listener pada tombol "Simpan"
+            $('#btnSimpan').click(function() {
+                // Sembunyikan tombol "Simpan" dan "Reset", serta tampilkan elemen loading
+                $(this).hide();
+                $('#btnReset').hide(); // Tambahkan id "btnReset" pada tombol "Reset"
+                $('#loading').show();
+
+                // Lakukan pengiriman formulir
+                $('form').submit();
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function() {
             // Tambahkan event listener pada tombol "Simpan"
@@ -751,236 +682,24 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fungsi Format Rupiah
-            function formatRupiah(angka) {
-                let numberString = angka.replace(/[^,\d]/g, "").toString(),
-                    split = numberString.split(","),
-                    sisa = split[0].length % 3,
-                    rupiah = split[0].substr(0, sisa),
-                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+        // Fungsi untuk memformat nilai menjadi format Rupiah
+        function formatRupiah(value) {
+            if (!value) return ''; // Jika nilai kosong, kembalikan string kosong
+            return parseInt(value).toLocaleString('id-ID'); // Format ke Rupiah dengan pemisah ribuan
+        }
 
-                if (ribuan) {
-                    let separator = sisa ? "." : "";
-                    rupiah += separator + ribuan.join(".");
+        // Fungsi yang dipanggil saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil semua elemen dengan kelas 'format-rupiah'
+            const inputs = document.querySelectorAll('.format-rupiah');
+
+            inputs.forEach(input => {
+                if (input.value) {
+                    // Format nilai yang ada di input ke format Rupiah
+                    input.value = formatRupiah(input.value);
                 }
-
-                return split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
-            }
-
-            // Fungsi Hitung Selisih dan Beri Keterangan
-            function hitungSelisih(input1, input2, output, keterangan) {
-                let value1 = parseInt(input1.value.replace(/[^,\d]/g, "")) || 0;
-                let value2 = parseInt(input2.value.replace(/[^,\d]/g, "")) || 0;
-                let selisih = value1 - value2;
-
-                output.value = formatRupiah(selisih.toString());
-
-                // Tentukan Keterangan
-                if (selisih > 0) {
-                    keterangan.textContent = "Kurang Bayar";
-                    keterangan.classList.remove("text-success");
-                    keterangan.classList.add("text-danger");
-                } else if (selisih < 0) {
-                    keterangan.textContent = "Lebih Bayar";
-                    keterangan.classList.remove("text-danger");
-                    keterangan.classList.add("text-success");
-                } else {
-                    keterangan.textContent = "Lunas";
-                    keterangan.classList.remove("text-danger", "text-success");
-                }
-            }
-
-            // Element Inputs
-            const inputs = [{
-                    input1: document.getElementById("total_penjualan"),
-                    input2: document.getElementById("total_penjualan1"),
-                    output: document.getElementById("totalpenjualan_selisih"),
-                    keterangan: document.getElementById("totalpenjualan_keterangan"),
-                },
-                {
-                    input1: document.getElementById("mesin_edc"),
-                    input2: document.getElementById("mesin_edc1"),
-                    output: document.getElementById("mesinedc_selisih"),
-                    keterangan: document.getElementById("mesinedc_keterangan"),
-                },
-                {
-                    input1: document.getElementById("qris"),
-                    input2: document.getElementById("qris1"),
-                    output: document.getElementById("qris_selisih"),
-                    keterangan: document.getElementById("qris_keterangan"),
-                },
-                {
-                    input1: document.getElementById("gobiz"),
-                    input2: document.getElementById("gobiz1"),
-                    output: document.getElementById("gobiz_selisih"),
-                    keterangan: document.getElementById("gobiz_keterangan"),
-                },
-                {
-                    input1: document.getElementById("transfer"),
-                    input2: document.getElementById("transfer1"),
-                    output: document.getElementById("transfer_selisih"),
-                    keterangan: document.getElementById("transfer_keterangan"),
-                },
-                {
-                    input1: document.getElementById("total_setoran"),
-                    input2: document.getElementById("total_setoran1"),
-                    output: document.getElementById("totalsetoran_selisih"),
-                    keterangan: document.getElementById("totalsetoran_keterangan"),
-                }
-            ];
-
-            // Tambahkan Event Listener ke Setiap Input
-            inputs.forEach(({
-                input1,
-                input2,
-                output,
-                keterangan
-            }) => {
-                input2.addEventListener("keyup", function() {
-                    this.value = formatRupiah(this.value, "");
-                    hitungSelisih(input1, input2, output, keterangan);
-                });
             });
         });
     </script>
 
-
-    <script>
-        function showCategoryModalpemesanan() {
-            $('#tableMarketing').modal('show');
-        }
-
-        function formatRibuan(angka) {
-            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function getSelectedDataPemesanan(setoran_penjualan_id, no_fakturpenjualantoko, penjualan_kotor, diskon_penjualan,
-            penjualan_bersih,
-            deposit_keluar, deposit_masuk,
-            total_penjualan, mesin_edc, qris, gobiz, transfer, total_setoran, tanggal_penjualan) {
-            document.getElementById('setoran_penjualan_id').value = setoran_penjualan_id;
-            document.getElementById('no_fakturpenjualantoko').value = no_fakturpenjualantoko;
-            document.getElementById('tanggal_penjualan').value = tanggal_penjualan;
-
-            document.getElementById('penjualan_kotor').value = formatRibuan(penjualan_kotor);
-            document.getElementById('diskon_penjualan').value = formatRibuan(diskon_penjualan);
-            document.getElementById('penjualan_bersih').value = formatRibuan(penjualan_bersih);
-            document.getElementById('deposit_masuk').value = formatRibuan(deposit_masuk);
-            document.getElementById('deposit_keluar').value = formatRibuan(deposit_keluar);
-            document.getElementById('total_penjualan').value = formatRibuan(total_penjualan);
-            document.getElementById('mesin_edc').value = formatRibuan(mesin_edc);
-            document.getElementById('qris').value = formatRibuan(qris);
-            document.getElementById('gobiz').value = formatRibuan(gobiz);
-            document.getElementById('transfer').value = formatRibuan(transfer);
-            document.getElementById('total_setoran').value = formatRibuan(total_setoran);
-
-            $('#tableMarketing').modal('hide');
-        }
-    </script>
-
-
-    <script>
-        function filterTabel() {
-            // Ambil nilai toko_id yang dipilih
-            const toko_id = document.getElementById('toko_id').value;
-
-            // Ambil semua baris tabel
-            const rows = document.querySelectorAll('#datatables4 tbody tr');
-
-            // Iterasi setiap baris tabel
-            rows.forEach(row => {
-                // Ambil nilai toko_id dari atribut data-toko
-                const tokoId = row.getAttribute('data-toko');
-
-                // Tampilkan atau sembunyikan baris berdasarkan nilai toko_id
-                if (toko_id === "" || toko_id == tokoId) {
-                    row.style.display = ""; // Tampilkan
-                } else {
-                    row.style.display = "none"; // Sembunyikan
-                }
-            });
-        }
-    </script>
-
-    {{-- <script>
-        function hitungSetoran() {
-            // Fungsi untuk membersihkan dan mengonversi nilai input
-            function parseInput(value) {
-                if (!value) return 0; // Jika nilai kosong, kembalikan 0
-                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')); // Hapus pemisah ribuan dan konversi ke angka
-            }
-
-            // Fungsi untuk menambahkan format ribuan
-            function formatRibuan(value) {
-                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                "."); // Tambahkan tanda titik sebagai pemisah ribuan
-            }
-
-            // Ambil nilai input yang sudah dibersihkan
-            const totalPenjualan = parseInput(document.getElementById("total_penjualan1").value);
-            const mesinEdc = parseInput(document.getElementById("mesin_edc1").value);
-            const qris = parseInput(document.getElementById("qris1").value);
-            const gobiz = parseInput(document.getElementById("gobiz1").value);
-            const transfer = parseInput(document.getElementById("transfer1").value);
-
-            // Hitung total setoran
-            const totalSetoran = totalPenjualan - mesinEdc - qris - gobiz - transfer;
-
-            // Tampilkan hasil dalam format ribuan
-            document.getElementById("total_setoran1").value = formatRibuan(totalSetoran);
-        }
-    </script> --}}
-
-    <script>
-        function hitungSetoran() {
-            // Fungsi untuk membersihkan dan mengonversi nilai input
-            function parseInput(value) {
-                if (!value) return 0; // Jika nilai kosong, kembalikan 0
-                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')); // Hapus pemisah ribuan dan konversi ke angka
-            }
-
-            // Fungsi untuk menambahkan format ribuan
-            function formatRibuan(value) {
-                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                    "."); // Tambahkan tanda titik sebagai pemisah ribuan
-            }
-
-            // Ambil nilai input yang sudah dibersihkan
-            const totalPenjualan = parseInput(document.getElementById("total_penjualan1").value);
-            const mesinEdc = parseInput(document.getElementById("mesin_edc1").value);
-            const qris = parseInput(document.getElementById("qris1").value);
-            const gobiz = parseInput(document.getElementById("gobiz1").value);
-            const transfer = parseInput(document.getElementById("transfer1").value);
-            const totalSetoranLama = parseInput(document.getElementById("total_setoran")
-                .value); // Nilai total_setoran sebelumnya
-
-            // Hitung total setoran baru
-            const totalSetoranBaru = totalPenjualan - mesinEdc - qris - gobiz - transfer;
-
-            // Hitung selisih antara total_setoran sebelumnya dengan total_setoran baru
-            const selisihSetoran = totalSetoranLama - totalSetoranBaru;
-
-            // Tampilkan hasil total setoran baru dalam format ribuan
-            document.getElementById("total_setoran1").value = formatRibuan(totalSetoranBaru);
-
-            // Tampilkan hasil selisih dalam format ribuan
-            document.getElementById("totalsetoran_selisih").value = formatRibuan(selisihSetoran);
-        }
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // Tambahkan event listener pada tombol "Simpan"
-            $('#btnSimpan').click(function() {
-                // Sembunyikan tombol "Simpan" dan "Reset", serta tampilkan elemen loading
-                $(this).hide();
-                $('#btnReset').hide(); // Tambahkan id "btnReset" pada tombol "Reset"
-                $('#loading').show();
-
-                // Lakukan pengiriman formulir
-                $('form').submit();
-            });
-        });
-    </script>
 @endsection

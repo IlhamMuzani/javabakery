@@ -36,17 +36,14 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 
-
-
-
 class Setoran_pelunasanController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         // Ambil semua data setoran penjualan
         $setoranPenjualans = Pelunasan_penjualan::orderBy('id', 'DESC')->get();
-    
+
         // Kirim data ke view
         return view('admin.setoran_pelunasan.index', compact('setoranPenjualans'));
     }
@@ -55,11 +52,11 @@ class Setoran_pelunasanController extends Controller
     {
         $tokos = Toko::all();
         $setoranPenjualans = Setoran_penjualan::orderBy('id', 'DESC')->get();
-    
+
         // dd($setoranPenjualans); // Periksa isi variabel sebelum dikirim ke view
         return view('admin.setoran_pelunasan.create', compact('setoranPenjualans', 'tokos'));
     }
-    
+
     function getdata1(Request $request)
     {
         // Validasi input
@@ -67,22 +64,22 @@ class Setoran_pelunasanController extends Controller
             'tanggal_penjualan' => 'required|date',
             'toko_id' => 'nullable|exists:tokos,id' // Validasi toko_id
         ]);
-    
+
         // Ambil parameter dari request
         $tanggalPenjualan = $request->input('tanggal_penjualan');
         $tokoId = $request->input('toko_id');
-    
+
         // Query untuk mengambil data dari tabel setoran_penjualan
         $query = Setoran_penjualan::whereDate('tanggal_penjualan', $tanggalPenjualan);
-    
+
         // Filter berdasarkan toko_id jika diberikan
         if ($tokoId) {
             $query->where('toko_id', $tokoId);
         }
-    
+
         // Ambil data pertama yang ditemukan
         $setoranPenjualan = $query->first();
-    
+
         // Jika tidak ada data yang ditemukan, kembalikan respons default
         if (!$setoranPenjualan) {
             return response()->json([
@@ -104,10 +101,10 @@ class Setoran_pelunasanController extends Controller
                 'plusminus' => 0,
             ]);
         }
-    
+
         // Format tanggal_setoran menjadi d-m-Y H:i:s
         $tanggalSetoranFormatted = Carbon::parse($setoranPenjualan->tanggal_setoran)->format('d-m-Y H:i:s');
-    
+
         // Kembalikan hasil dari setoran_penjualan dalam format JSON
         return response()->json([
             'id' => $setoranPenjualan->id,
@@ -130,17 +127,17 @@ class Setoran_pelunasanController extends Controller
             'plusminus' => number_format($setoranPenjualan->plusminus, 0, ',', '.'),
         ]);
     }
-    
-    
- 
+
+
+
     public function updateStatus(Request $request)
     {
         // Ambil id setoran dari request
         $setoran_id = $request->input('id');
-    
+
         // Cari setoran_penjualan berdasarkan id
         $setoran = Setoran_penjualan::find($setoran_id);
-    
+
         if ($setoran) {
             // Hapus format number sebelum menyimpan
             $penjualan_kotor = str_replace('.', '', $request->input('penjualan_kotor'));
@@ -149,7 +146,7 @@ class Setoran_pelunasanController extends Controller
             $total_penjualan = str_replace('.', '', $request->input('total_penjualan'));
             $deposit_keluar = str_replace('.', '', $request->input('deposit_keluar'));
             $deposit_masuk = str_replace('.', '', $request->input('deposit_masuk'));
-    
+
             // Update field berdasarkan input yang sudah dihapus format number-nya
             $setoran->penjualan_kotor = $penjualan_kotor;
             $setoran->diskon_penjualan = $diskon_penjualan;
@@ -159,69 +156,64 @@ class Setoran_pelunasanController extends Controller
             $setoran->deposit_masuk = $deposit_masuk;
             $setoran->status = 'posting'; // Contoh pengubahan status
             $setoran->save();
-    
+
             // Redirect dengan pesan sukses
             return redirect()->route('setoran_pelunasan.index')->with('success', 'Data berhasil disimpan');
         }
-    
+
         // Jika setoran tidak ditemukan
         return redirect()->back()->with('error', 'Setoran tidak ditemukan');
     }
+
+
 
     public function store(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'penjualan_kotor1' => 'nullable|numeric',
-                'diskon_penjualan1' => 'nullable|numeric',
-                'penjualan_bersih1' => 'nullable|numeric',
-                'deposit_keluar1' => 'nullable|numeric',
-                'deposit_masuk1' => 'nullable|numeric',
-                'total_penjualan1' => 'nullable|numeric',
-                'mesin_edc1' => 'nullable|numeric',
-                'qris1' => 'nullable|numeric',
-                'gobiz1' => 'nullable|numeric',
-                'transfer1' => 'nullable|numeric',
-                'total_setoran1' => 'nullable|numeric',
-                'penjualan_selisih' => 'nullable|numeric',
-                'diskon_selisih' => 'nullable|numeric',
-                'penjualanbersih_selisih' => 'nullable|numeric',
-                'depositkeluar_selisih' => 'nullable|numeric',
-                'depositmasuk_selisih' => 'nullable|numeric',
-                'totalpenjualan_selisih' => 'nullable|numeric',
-                'mesinedc_selisih' => 'nullable|numeric',
-                'qris_selisih' => 'nullable|numeric',
-                'gobiz_selisih' => 'nullable|numeric',
-                'transfer_selisih' => 'nullable|numeric',
-                'totalsetoran_selisih' => 'nullable|numeric',
-                'no_fakturpenjualantoko' => 'nullable',
+                'setoran_penjualan_id' => 'required',
+                'mesin_edc1' => 'required',
+                'qris1' => 'required',
+                'gobiz1' => 'required',
+                'transfer1' => 'required',
+                'total_setoran1' => 'required',
             ],
             [
-                'penjualan_kotor1.nullable' => 'Masukkan kode lama',
-                'diskon_penjualan1.nullable' => 'Masukkan nama pelanggan',
-                'penjualan_bersih1.nullable' => 'Masukan pekerjaan',
-                'deposit_keluar1.nullable' => 'Pilih gender',
-                'total_penjualan1.nullable' => 'Masukkan email',
-                'total_penjualan1.nullable' => 'Masukkan no telepon',
-                'mesin_edc1.nullable' => 'Masukkan alamat',
-                'qris1.nullable' => 'Masukkan tanggal lahir',
-                'gobiz1.nullable' => 'Masukkan tanggal gabung',
-                'transfer1.nullable' => 'Masukkan tanggal expired',
-                'total_setoran1.nullable' => 'Gambar yang dimasukkan salah!',
+                'setoran_penjualan_id.required' => 'Pilih Faktur',
+                'mesin_edc1.required' => 'Masukkan nominal mesin edc',
+                'qris1.required' => 'Masukkan nominal qris',
+                'gobiz1.required' => 'Masukkan nominal gobiz',
+                'transfer1.required' => 'Masukkan nominal transfer',
+                'total_setoran1.required' => 'Masukkan nominal setoran tunai',
             ]
         );
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator)->withInput();
-        // }
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return back()->withInput()->with('error', $errors);
+        }
 
+        $tanggal = Carbon::now()->format('Y-m-d');
         $pelunasan = Pelunasan_penjualan::create(array_merge(
             $request->all(),
             [
-                'status' => 'posting',
+                'setoran_penjualan_id' => $request->setoran_penjualan_id,
+                'toko_id' => $request->toko_id,
+                'mesin_edc1' => str_replace(',', '.', str_replace('.', '', $request->mesin_edc1)),
+                'qris1' => str_replace(',', '.', str_replace('.', '', $request->qris1)),
+                'gobiz1' => str_replace(',', '.', str_replace('.', '', $request->gobiz1)),
+                'transfer1' => str_replace(',', '.', str_replace('.', '', $request->transfer1)),
+                'total_setoran1' => str_replace(',', '.', str_replace('.', '', $request->total_setoran1)),
+                'mesinedc_selisih' => str_replace(',', '.', str_replace('.', '', $request->mesinedc_selisih)),
+                'qris_selisih' => str_replace(',', '.', str_replace('.', '', $request->qris_selisih)),
+                'gobiz_selisih' => str_replace(',', '.', str_replace('.', '', $request->gobiz_selisih)),
+                'transfer_selisih' => str_replace(',', '.', str_replace('.', '', $request->transfer_selisih)),
+                'totalsetoran_selisih' => str_replace(',', '.', str_replace('.', '', $request->totalsetoran_selisih)),
                 'tanggal_setoran' => Carbon::now('Asia/Jakarta'),
                 'faktur_pelunasanpenjualan' => $this->kode(),
+                'tanggal_awal' =>  $tanggal,
+                'status' => 'posting',
 
             ]
         ));
@@ -239,9 +231,9 @@ class Setoran_pelunasanController extends Controller
 
         // Mengambil kode terakhir yang dibuat pada hari yang sama dengan prefix PBNJ
         $lastBarang = Pelunasan_penjualan::where('faktur_pelunasanpenjualan', 'LIKE', $prefix . '%')
-                                    ->whereDate('tanggal_setoran', Carbon::today())
-                                    ->orderBy('faktur_pelunasanpenjualan', 'desc')
-                                    ->first();
+            ->whereDate('tanggal_setoran', Carbon::today())
+            ->orderBy('faktur_pelunasanpenjualan', 'desc')
+            ->first();
 
         if (!$lastBarang) {
             $num = 1;
@@ -292,21 +284,21 @@ class Setoran_pelunasanController extends Controller
         return $pdf->stream('faktur_setoran_penjualan.pdf');
     }
 
-    public function printPenjualanKotor(Request $request) 
+    public function printPenjualanKotor(Request $request)
     {
         // Ambil parameter tanggal_penjualan dari request
         $tanggal_penjualan = $request->get('tanggal_penjualan'); // Menggunakan query string
-    
+
         // Pastikan tanggal_penjualan tidak null
         if (!$tanggal_penjualan) {
             return redirect()->back()->with('error', 'Tanggal penjualan tidak boleh kosong.');
         }
-    
+
         // Ambil filter lain seperti status, toko_id, dll.
         $status = $request->get('status');
         $toko_id = $request->get('toko_id');
         $produk_id = $request->get('produk');
-    
+
         // Query data penjualan
         $query = Penjualanproduk::with('detailPenjualanProduk.produk')
             ->when($status, function ($query, $status) {
@@ -317,20 +309,20 @@ class Setoran_pelunasanController extends Controller
             })
             ->whereDate('tanggal_penjualan', Carbon::parse($tanggal_penjualan)->startOfDay()) // Pastikan menggunakan whereDate
             ->orderBy('tanggal_penjualan', 'desc');
-    
+
         $inquery = $query->get();
-    
+
         // Gabungkan hasil berdasarkan produk_id
         $finalResults = [];
-        
+
         foreach ($inquery as $penjualan) {
             foreach ($penjualan->detailPenjualanProduk as $detail) {
                 $produk = $detail->produk;
-    
+
                 // Pastikan produk tidak null sebelum mengakses properti dan cocok dengan filter produk_id
                 if ($produk && (!$produk_id || $produk->id == $produk_id)) {
                     $key = $produk->id; // Menggunakan ID produk sebagai key
-    
+
                     if (!isset($finalResults[$key])) {
                         $finalResults[$key] = [
                             'tanggal_penjualan' => $penjualan->tanggal_penjualan,
@@ -344,44 +336,44 @@ class Setoran_pelunasanController extends Controller
                             'penjualan_bersih' => 0,
                         ];
                     }
-    
+
                     // Jumlahkan jumlah dan total
                     $finalResults[$key]['jumlah'] += $detail->jumlah;
                     $finalResults[$key]['penjualan_kotor'] += $detail->jumlah * $produk->harga;
                     $finalResults[$key]['total'] += $detail->total;
-    
+
                     // Hitung diskon 10% dari jumlah * harga
                     if ($detail->diskon > 0) {
                         $diskonPerItem = $produk->harga * 0.10; // Diskon per unit
                         $finalResults[$key]['diskon'] += $detail->jumlah * $diskonPerItem;
                     }
-    
+
                     // Kalkulasi penjualan bersih (penjualan kotor - diskon)
                     $finalResults[$key]['penjualan_bersih'] = $finalResults[$key]['penjualan_kotor'] - $finalResults[$key]['diskon'];
                 }
             }
         }
-    
+
         // Mengurutkan finalResults berdasarkan kode_lama
         uasort($finalResults, function ($a, $b) {
             return strcmp($a['kode_lama'], $b['kode_lama']);
         });
-    
+
         // Ambil data untuk filter
         $tokos = Toko::all(); // Model untuk tabel toko
         $klasifikasis = Klasifikasi::all(); // Model untuk tabel klasifikasi
         $produks = Produk::all(); // Model untuk tabel produk
-    
+
         // Dapatkan nama toko berdasarkan toko_id
         $branchName = 'Semua Toko';
         if ($toko_id) {
             $toko = Toko::find($toko_id);
             $branchName = $toko ? $toko->nama_toko : 'Semua Toko';
         }
-    
+
         // Pass raw dates ke view
         $startDate = $tanggal_penjualan;
-    
+
         // Menggunakan Barryvdh\DomPDF\Facade\Pdf untuk memuat dan menghasilkan PDF
         $pdf = FacadePdf::loadView('admin.setoran_pelunasan.printBk', [
             'finalResults' => $finalResults,
@@ -391,26 +383,26 @@ class Setoran_pelunasanController extends Controller
             'produks' => $produks, // Tambahkan data produk
             'klasifikasis' => $klasifikasis,
         ]);
-    
+
         // Output PDF ke browser
         return $pdf->stream('laporan_penjualan_produk.pdf');
     }
 
-    public function printDiskonPenjualan(Request $request) 
+    public function printDiskonPenjualan(Request $request)
     {
         // Ambil parameter tanggal_penjualan dari request
         $tanggal_penjualan = $request->get('tanggal_penjualan'); // Menggunakan query string
-    
+
         // Pastikan tanggal_penjualan tidak null
         if (!$tanggal_penjualan) {
             return redirect()->back()->with('error', 'Tanggal penjualan tidak boleh kosong.');
         }
-    
+
         // Ambil filter lain seperti status, toko_id, dll.
         $status = $request->get('status');
         $toko_id = $request->get('toko_id');
         $produk_id = $request->get('produk');
-    
+
         // Query data penjualan
         $query = Penjualanproduk::with('detailPenjualanProduk.produk')
             ->when($status, function ($query, $status) {
@@ -421,20 +413,20 @@ class Setoran_pelunasanController extends Controller
             })
             ->whereDate('tanggal_penjualan', Carbon::parse($tanggal_penjualan)->startOfDay()) // Pastikan menggunakan whereDate
             ->orderBy('tanggal_penjualan', 'desc');
-    
+
         $inquery = $query->get();
-    
+
         // Gabungkan hasil berdasarkan produk_id
         $finalResults = [];
-        
+
         foreach ($inquery as $penjualan) {
             foreach ($penjualan->detailPenjualanProduk as $detail) {
                 $produk = $detail->produk;
-    
+
                 // Pastikan produk tidak null sebelum mengakses properti dan cocok dengan filter produk_id
                 if ($produk && (!$produk_id || $produk->id == $produk_id)) {
                     $key = $produk->id; // Menggunakan ID produk sebagai key
-    
+
                     if (!isset($finalResults[$key])) {
                         $finalResults[$key] = [
                             'tanggal_penjualan' => $penjualan->tanggal_penjualan,
@@ -448,44 +440,44 @@ class Setoran_pelunasanController extends Controller
                             'penjualan_bersih' => 0,
                         ];
                     }
-    
+
                     // Jumlahkan jumlah dan total
                     $finalResults[$key]['jumlah'] += $detail->jumlah;
                     $finalResults[$key]['penjualan_kotor'] += $detail->jumlah * $produk->harga;
                     $finalResults[$key]['total'] += $detail->total;
-    
+
                     // Hitung diskon 10% dari jumlah * harga
                     if ($detail->diskon > 0) {
                         $diskonPerItem = $produk->harga * 0.10; // Diskon per unit
                         $finalResults[$key]['diskon'] += $detail->jumlah * $diskonPerItem;
                     }
-    
+
                     // Kalkulasi penjualan bersih (penjualan kotor - diskon)
                     $finalResults[$key]['penjualan_bersih'] = $finalResults[$key]['penjualan_kotor'] - $finalResults[$key]['diskon'];
                 }
             }
         }
-    
+
         // Mengurutkan finalResults berdasarkan kode_lama
         uasort($finalResults, function ($a, $b) {
             return strcmp($a['kode_lama'], $b['kode_lama']);
         });
-    
+
         // Ambil data untuk filter
         $tokos = Toko::all(); // Model untuk tabel toko
         $klasifikasis = Klasifikasi::all(); // Model untuk tabel klasifikasi
         $produks = Produk::all(); // Model untuk tabel produk
-    
+
         // Dapatkan nama toko berdasarkan toko_id
         $branchName = 'Semua Toko';
         if ($toko_id) {
             $toko = Toko::find($toko_id);
             $branchName = $toko ? $toko->nama_toko : 'Semua Toko';
         }
-    
+
         // Pass raw dates ke view
         $startDate = $tanggal_penjualan;
-    
+
         // Menggunakan Barryvdh\DomPDF\Facade\Pdf untuk memuat dan menghasilkan PDF
         $pdf = FacadePdf::loadView('admin.setoran_pelunasan.printDiskon', [
             'finalResults' => $finalResults,
@@ -495,27 +487,27 @@ class Setoran_pelunasanController extends Controller
             'produks' => $produks, // Tambahkan data produk
             'klasifikasis' => $klasifikasis,
         ]);
-    
+
         // Output PDF ke browser
         return $pdf->stream('laporan_penjualan_produk.pdf');
     }
 
 
-    public function printDepositKeluar(Request $request) 
+    public function printDepositKeluar(Request $request)
     {
         // Ambil parameter tanggal_penjualan dari request
         $tanggal_penjualan = $request->get('tanggal_penjualan'); // Menggunakan query string
-    
+
         // Pastikan tanggal_penjualan tidak null
         if (!$tanggal_penjualan) {
             return redirect()->back()->with('error', 'Tanggal penjualan tidak boleh kosong.');
         }
-    
+
         // Ambil filter lain seperti status, toko_id, dll.
         $status = $request->get('status');
         $toko_id = $request->get('toko_id');
         $produk_id = $request->get('produk');
-    
+
         // Query data penjualan
         $query = Penjualanproduk::with('detailPenjualanProduk.produk')
             ->when($status, function ($query, $status) {
@@ -526,20 +518,20 @@ class Setoran_pelunasanController extends Controller
             })
             ->whereDate('tanggal_penjualan', Carbon::parse($tanggal_penjualan)->startOfDay()) // Pastikan menggunakan whereDate
             ->orderBy('tanggal_penjualan', 'desc');
-    
+
         $inquery = $query->get();
-    
+
         // Gabungkan hasil berdasarkan produk_id
         $finalResults = [];
-        
+
         foreach ($inquery as $penjualan) {
             foreach ($penjualan->detailPenjualanProduk as $detail) {
                 $produk = $detail->produk;
-    
+
                 // Pastikan produk tidak null sebelum mengakses properti dan cocok dengan filter produk_id
                 if ($produk && (!$produk_id || $produk->id == $produk_id)) {
                     $key = $produk->id; // Menggunakan ID produk sebagai key
-    
+
                     if (!isset($finalResults[$key])) {
                         $finalResults[$key] = [
                             'tanggal_penjualan' => $penjualan->tanggal_penjualan,
@@ -553,44 +545,44 @@ class Setoran_pelunasanController extends Controller
                             'penjualan_bersih' => 0,
                         ];
                     }
-    
+
                     // Jumlahkan jumlah dan total
                     $finalResults[$key]['jumlah'] += $detail->jumlah;
                     $finalResults[$key]['penjualan_kotor'] += $detail->jumlah * $produk->harga;
                     $finalResults[$key]['total'] += $detail->total;
-    
+
                     // Hitung diskon 10% dari jumlah * harga
                     if ($detail->diskon > 0) {
                         $diskonPerItem = $produk->harga * 0.10; // Diskon per unit
                         $finalResults[$key]['diskon'] += $detail->jumlah * $diskonPerItem;
                     }
-    
+
                     // Kalkulasi penjualan bersih (penjualan kotor - diskon)
                     $finalResults[$key]['penjualan_bersih'] = $finalResults[$key]['penjualan_kotor'] - $finalResults[$key]['diskon'];
                 }
             }
         }
-    
+
         // Mengurutkan finalResults berdasarkan kode_lama
         uasort($finalResults, function ($a, $b) {
             return strcmp($a['kode_lama'], $b['kode_lama']);
         });
-    
+
         // Ambil data untuk filter
         $tokos = Toko::all(); // Model untuk tabel toko
         $klasifikasis = Klasifikasi::all(); // Model untuk tabel klasifikasi
         $produks = Produk::all(); // Model untuk tabel produk
-    
+
         // Dapatkan nama toko berdasarkan toko_id
         $branchName = 'Semua Toko';
         if ($toko_id) {
             $toko = Toko::find($toko_id);
             $branchName = $toko ? $toko->nama_toko : 'Semua Toko';
         }
-    
+
         // Pass raw dates ke view
         $startDate = $tanggal_penjualan;
-    
+
         // Menggunakan Barryvdh\DomPDF\Facade\Pdf untuk memuat dan menghasilkan PDF
         $pdf = FacadePdf::loadView('admin.setoran_pelunasan.printDiskon', [
             'finalResults' => $finalResults,
@@ -600,15 +592,14 @@ class Setoran_pelunasanController extends Controller
             'produks' => $produks, // Tambahkan data produk
             'klasifikasis' => $klasifikasis,
         ]);
-    
+
         // Output PDF ke browser
         return $pdf->stream('laporan_penjualan_produk.pdf');
     }
-    
+
     public function show($id)
     {
         $setoran = pelunasan_penjualan::findOrFail($id);
         return view('admin.setoran_pelunasan.show', compact('setoran'));
     }
-
-}   
+}

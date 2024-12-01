@@ -47,10 +47,10 @@ class Laporan_penjualantokoController extends Controller
         $tanggalPenjualan = $request->input('tanggal_setoran');
         $tanggalAkhir = $request->input('tanggal_akhir');
         $toko_id = $request->input('toko_id');
-    
+
         // Query dasar untuk setoran penjualan
         $query = Setoran_penjualan::query();
-    
+
         // Filter berdasarkan tanggal setoran
         if ($tanggalPenjualan && $tanggalAkhir) {
             $tanggalPenjualan = Carbon::parse($tanggalPenjualan)->startOfDay();
@@ -66,32 +66,32 @@ class Laporan_penjualantokoController extends Controller
             // Jika tidak ada filter tanggal, tampilkan data untuk hari ini
             $query->whereDate('tanggal_setoran', Carbon::today());
         }
-    
+
         // Filter berdasarkan toko
         if ($toko_id) {
             $query->where('toko_id', $toko_id);
         }
-    
+
         // Ambil data setoran penjualan
         $setoranPenjualans = $query->orderBy('id', 'DESC')->get();
-    
+
         // Ambil data toko untuk dropdown
         $tokos = Toko::all();
-    
+
         // Kirim data ke view
         return view('admin.laporan_penjualantoko.index', compact('setoranPenjualans', 'tokos'));
     }
-    
+
     public function printReportpenjualanToko(Request $request)
     {
         // Ambil parameter dari request
         $tanggalPenjualan = $request->input('tanggal_setoran');
         $tanggalAkhir = $request->input('tanggal_akhir');
         $tokoId = $request->input('toko_id');
-    
+
         // Query dasar untuk setoran penjualan
         $query = Setoran_penjualan::query();
-    
+
         // Filter berdasarkan tanggal setoran
         if ($tanggalPenjualan && $tanggalAkhir) {
             $tanggalPenjualan = Carbon::parse($tanggalPenjualan)->startOfDay();
@@ -107,15 +107,15 @@ class Laporan_penjualantokoController extends Controller
             // Jika tidak ada filter tanggal, gunakan hari ini
             $query->whereDate('tanggal_setoran', Carbon::today());
         }
-    
+
         // Filter berdasarkan toko
         if ($tokoId) {
             $query->where('toko_id', $tokoId);
         }
-    
+
         // Ambil data setoran penjualan dengan relasi yang dibutuhkan
         $setoranPenjualans = $query->with('toko')->orderBy('id', 'DESC')->get();
-    
+
         // Menentukan nama toko
         if ($tokoId) {
             $toko = Toko::find($tokoId); // Ambil nama toko berdasarkan ID
@@ -123,11 +123,11 @@ class Laporan_penjualantokoController extends Controller
         } else {
             $branchName = 'Semua Toko'; // Default jika tidak ada filter toko
         }
-    
+
         // Format tanggal untuk tampilan di PDF
         $formattedStartDate = $tanggalPenjualan ? Carbon::parse($tanggalPenjualan)->format('d-m-Y') : 'N/A';
         $formattedEndDate = $tanggalAkhir ? Carbon::parse($tanggalAkhir)->format('d-m-Y') : 'N/A';
-    
+
         // Buat PDF menggunakan Facade PDF
         $pdf = FacadePdf::loadView('admin.laporan_penjualantoko.print', [
             'setoranPenjualans' => $setoranPenjualans,
@@ -135,7 +135,7 @@ class Laporan_penjualantokoController extends Controller
             'endDate' => $formattedEndDate,
             'branchName' => $branchName,
         ]);
-    
+
         // Menambahkan nomor halaman di kanan bawah
         $pdf->output();
         $dompdf = $pdf->getDomPDF();
@@ -144,22 +144,19 @@ class Laporan_penjualantokoController extends Controller
             $text = "Page $pageNumber of $pageCount";
             $font = $fontMetrics->getFont('Arial', 'normal');
             $size = 8;
-    
+
             // Menghitung lebar teks
             $width = $fontMetrics->getTextWidth($text, $font, $size);
-    
+
             // Mengatur koordinat X dan Y
             $x = $canvas->get_width() - $width - 10; // 10 pixel dari kanan
             $y = $canvas->get_height() - 15; // 15 pixel dari bawah
-    
+
             // Menambahkan teks ke posisi yang ditentukan
             $canvas->text($x, $y, $text, $font, $size);
         });
-    
+
         // Output PDF ke browser
         return $pdf->stream('laporan_setoran_penjualan.pdf');
     }
-    
-
-
 }

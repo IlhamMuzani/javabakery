@@ -15,8 +15,10 @@ class Pelunasan_penjualan extends Model
 {
     use HasFactory;
 
-    
+
     protected $fillable = [
+        'kategori',
+        'setoran_penjualan_id',
         'tanggal_penjualan',
         'faktur_pelunasanpenjualan',
         'penjualan_kotor1',
@@ -49,8 +51,9 @@ class Pelunasan_penjualan extends Model
         'gobiz_selisih',
         'transfer_selisih',
         'totalsetoran_selisih',
+        'tanggal_awal'
     ];
-    
+
 
     use SoftDeletes;
     protected $dates = ['deleted_at'];
@@ -78,31 +81,35 @@ class Pelunasan_penjualan extends Model
     {
         return $this->hasMany(Detailpenjualanproduk::class, 'penjualanproduk_id');
     }
-    
+
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'pelanggan_id');
     }
-    
+
     public function toko()
     {
         return $this->belongsTo(Toko::class, 'toko_id');
     }
-    
+
     public function metodePembayaran()
-{
-    return $this->belongsTo(Metodepembayaran::class, 'metode_id');
-}
+    {
+        return $this->belongsTo(Metodepembayaran::class, 'metode_id');
+    }
 
-public function pelunasan()
-{
-    return $this->hasOne(Pelunasan::class);
-}
+    public function pelunasan()
+    {
+        return $this->hasOne(Pelunasan::class);
+    }
 
-public function dppemesanan()
-{
-    return $this->belongsTo(Dppemesanan::class, 'dppemesanan_id');
-}
+    public function dppemesanan()
+    {
+        return $this->belongsTo(Dppemesanan::class, 'dppemesanan_id');
+    }
 
 
+    public function setoran_penjualan()
+    {
+        return $this->belongsTo(Setoran_penjualan::class, 'setoran_penjualan_id');
+    }
 }

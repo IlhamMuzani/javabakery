@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Produks')
+@section('title', 'Laporan')
 
 @section('content')
     <div id="loadingSpinner" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
@@ -55,47 +55,50 @@
                     {{ session('error') }}
                 </div>
             @endif
-            <div class="card">      
+            <div class="card">
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <input class="form-control" id="tanggal_setoran" name="tanggal_setoran" type="date"
-                                    value="{{ Request::get('tanggal_setoran') }}" max="{{ date('Y-m-d') }}" />
-                                <label for="tanggal_setoran">(Dari Tanggal)</label>
+                                <label for="tanggal_awal">Tanggal Awal</label>
+                                <input class="form-control" id="tanggal_awal" name="tanggal_awal" type="date"
+                                    value="{{ Request::get('tanggal_awal') }}" max="{{ date('Y-m-d') }}" />
                             </div>
                             <div class="col-md-3 mb-3">
+                                <label for="tanggal_akhir">Tanggal Akhir</label>
                                 <input class="form-control" id="tanggal_akhir" name="tanggal_akhir" type="date"
                                     value="{{ Request::get('tanggal_akhir') }}" max="{{ date('Y-m-d') }}" />
-                                <label for="tanggal_akhir">(Sampai Tanggal)</label>
                             </div>
                             <div class="col-md-3 mb-3">
+                                <label for="toko">(Pilih Toko)</label>
                                 <select class="custom-select form-control" id="toko" name="toko_id">
                                     <option value="">- Semua Toko -</option>
                                     @foreach ($tokos as $toko)
-                                        <option value="{{ $toko->id }}" {{ Request::get('toko_id') == $toko->id ? 'selected' : '' }}>{{ $toko->nama_toko }}</option>
+                                        <option value="{{ $toko->id }}"
+                                            {{ Request::get('toko_id') == $toko->id ? 'selected' : '' }}>
+                                            {{ $toko->nama_toko }}</option>
                                     @endforeach
                                 </select>
-                                <label for="toko">(Pilih Toko)</label>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <button type="submit" class="btn btn-outline-primary btn-block">
+                                <button type="button" class="btn btn-outline-primary btn-block" onclick="cari()">
                                     <i class="fas fa-search"></i> Cari
                                 </button>
-                                <button type="button" class="btn btn-primary btn-block" onclick="printReportpelunasanToko()" target="_blank">
+                                <button type="button" class="btn btn-primary btn-block"
+                                    onclick="printReportpelunasanToko()" target="_blank">
                                     <i class="fas fa-print"></i> Cetak
                                 </button>
                             </div>
                         </div>
                     </form>
-                    
-                   
+
+
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 10px">
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
-                                <th>Tanggal Setoran</th> 
-                                <th>Cabang</th> 
+                                <th>Tanggal Setoran</th>
+                                <th>Cabang</th>
                                 <th>Penjualan Kotor</th>
                                 <th>Diskon Penjualan</th>
                                 <th>Penjualan Bersih</th>
@@ -114,25 +117,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($setoranPenjualans as $index => $item)
-                            <tr class="dropdown"{{ $item->id }}>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td>{{ $item->tanggal_setoran ? \Carbon\Carbon::parse($item->tanggal_setoran)->format('d-m-Y') : '-' }}</td> <!-- Menampilkan Tanggal item -->
-                                <td>{{ $item->toko->nama_toko }}</td>
-                                <td>{{ number_format($item->penjualan_kotor, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->diskon_penjualan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->penjualan_bersih, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->deposit_keluar, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->deposit_masuk, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->total_penjualan, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->mesin_edc ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->gobiz ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->transfer ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->qris ?? 0, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->total_setoran, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->nominal_setoran, 0, ',', '.') }}</td>
-                                <td>{{ number_format($item->plusminus, 0, ',', '.') }}</td>
-                        
+                            @foreach ($inquery as $index => $item)
+                                <tr class="dropdown"{{ $item->id }}>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td>{{ $item->tanggal_setoran ? \Carbon\Carbon::parse($item->tanggal_setoran)->format('d-m-Y') : '-' }}
+                                    </td> <!-- Menampilkan Tanggal item -->
+                                    <td>{{ $item->toko->nama_toko ?? null }}</td>
+                                    <td>{{ number_format($item->setoran_penjualan->penjualan_kotor, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->setoran_penjualan->diskon_penjualan, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->setoran_penjualan->penjualan_bersih, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->setoran_penjualan->deposit_keluar, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->setoran_penjualan->deposit_masuk, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->setoran_penjualan->total_penjualan, 2, ',', '.') ?? '0' }}
+                                    </td>
+                                    <td>{{ number_format($item->mesin_edc1, 2, ',', '.') ?? '0' }}</td>
+                                    <td>{{ number_format($item->gobiz1, 2, ',', '.') ?? '0' }}</td>
+                                    <td>{{ number_format($item->transfer1, 2, ',', '.') ?? '0' }}</td>
+                                    <td>{{ number_format($item->qris1, 2, ',', '.') ?? '0' }}</td>
+                                    <td>{{ number_format($item->setoran_penjualan->total_setoran, 2, ',', '.') }}</td>
+                                    <td>{{ number_format($item->total_setoran1, 0, ',', '.') }}</td>
+                                    <td>{{ number_format($item->totalsetoran_selisih, 0, ',', '.') }}</td>
+
                                     <td class="text-center">
                                         @if ($item->status == 'posting')
                                             <button type="button" class="btn btn-success btn-sm">
@@ -140,27 +150,33 @@
                                             </button>
                                         @endif
                                         @if ($item->status == 'unpost')
-                                        <button type="button" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         @endif
                                         @if ($item->status == 'approve')
-                                        <button type="button" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                         @endif
-                                     
+
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if ($item->status == 'unpost')
-                                            <a class="dropdown-item posting-btn" data-memo-id="{{ $item->id }}">Posting</a>
-                                                <a class="dropdown-item" href="{{ route('inquery_penjualantoko.print', $item->id) }}" target="_blank">Print</a>  
+                                                <a class="dropdown-item posting-btn"
+                                                    data-memo-id="{{ $item->id }}">Posting</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('inquery_penjualantoko.print', $item->id) }}"
+                                                    target="_blank">Print</a>
                                             @endif
 
                                             @if ($item->status == 'posting')
-                                                <a class="dropdown-item unpost-btn" data-memo-id="{{ $item->id }}">Unpost</a>
-                                                <a class="dropdown-item" href="{{ route('inquery_penjualantoko.print', $item->id) }}" target="_blank">Print</a>
+                                                <a class="dropdown-item unpost-btn"
+                                                    data-memo-id="{{ $item->id }}">Unpost</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('inquery_penjualantoko.print', $item->id) }}"
+                                                    target="_blank">Print</a>
                                             @endif
-                                           
+
                                         </div>
                                     </td>
                                 </tr>
@@ -187,7 +203,7 @@
 
     <!-- /.card -->
     <script>
-        var tanggalAwal = document.getElementById('tanggal_setoran');
+        var tanggalAwal = document.getElementById('tanggal_awal');
         var tanggalAkhir = document.getElementById('tanggal_akhir');
         if (tanggalAwal.value == "") {
             tanggalAkhir.readOnly = true;
@@ -209,34 +225,45 @@
             form.action = "{{ url('admin/laporan_setoranpelunasan') }}";
             form.submit();
         }
-    </script>
 
-<script>
-    function printReportpelunasanToko() {
-        var tanggalAwal = document.getElementById('tanggal_setoran').value;
-        var tanggalAkhir = document.getElementById('tanggal_akhir').value;
+        function printReport() {
+            var startDate = tanggalAwal.value;
+            var endDate = tanggalAkhir.value;
 
-        if (tanggalAwal === "" || tanggalAkhir === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Tanggal Belum Dipilih!',
-                text: 'Silakan isi tanggal terlebih dahulu.',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#3085d6',
-                background: '#fff',
-                customClass: {
-                    popup: 'animated bounceIn'
-                }
-            });
-            return;
+            if (startDate && endDate) {
+                form.action = "{{ url('admin/print_kasbonkaryawan') }}" + "?start_date=" + startDate + "&end_date=" +
+                    endDate;
+                form.submit();
+            } else {
+                alert("Silakan isi kedua tanggal sebelum mencetak.");
+            }
         }
+    </script>
+    <script>
+        function printReportpelunasanToko() {
+            var tanggalAwal = document.getElementById('tanggal_awal').value;
+            var tanggalAkhir = document.getElementById('tanggal_akhir').value;
+
+            if (tanggalAwal === "" || tanggalAkhir === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Tanggal Belum Dipilih!',
+                    text: 'Silakan isi tanggal terlebih dahulu.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6',
+                    background: '#fff',
+                    customClass: {
+                        popup: 'animated bounceIn'
+                    }
+                });
+                return;
+            }
 
             const form = document.getElementById('form-action');
             form.action = "{{ url('admin/printReportpelunasanToko') }}";
             form.target = "_blank";
             form.submit();
         }
-
-</script>
+    </script>
 
 @endsection

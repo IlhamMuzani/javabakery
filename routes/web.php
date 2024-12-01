@@ -193,7 +193,10 @@ Route::get('produk/{kode}', [\App\Http\Controllers\ProdukController::class, 'det
 
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index']);
-    
+
+    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index']);
+    Route::post('profile/update', [\App\Http\Controllers\Admin\ProfileController::class, 'update']);
+
     Route::resource('akses', \App\Http\Controllers\Admin\AksesController::class);
     Route::get('akses/access/{id}', [\App\Http\Controllers\Admin\AksesController::class, 'access']);
     Route::post('akses-access/{id}', [\App\Http\Controllers\Admin\AksesController::class, 'access_user']);
@@ -211,30 +214,30 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     // Route::post('admin/pelanggan/import', [PelangganController::class, 'import'])->name('pelanggan.import');
     Route::post('admin/pelanggan/import', [PelangganController::class, 'importPelanggan'])->name('pelanggan.import');
 
-    Route::resource('departemen', \App\Http\Controllers\Admin\DepartemenController::class); 
+    Route::resource('departemen', \App\Http\Controllers\Admin\DepartemenController::class);
 
-    Route::resource('barang', \App\Http\Controllers\Admin\BarangController::class); 
+    Route::resource('barang', \App\Http\Controllers\Admin\BarangController::class);
     Route::get('klasifikasi/get_klasifikasi/{id}', [\App\Http\Controllers\Admin\BarangController::class, 'get_klasifikasi']);
 
-    Route::resource('klasifikasi', \App\Http\Controllers\Admin\KlasifikasiController::class); 
+    Route::resource('klasifikasi', \App\Http\Controllers\Admin\KlasifikasiController::class);
     Route::get('/klasifikasi/{id}/sub', [\App\Http\Controllers\Admin\KlasifikasiController::class, 'getSubCategories']);
     Route::get('klasifikasi/get_subklasifikasi/{id}', [\App\Http\Controllers\Admin\KlasifikasiController::class, 'get_subklasifikasi']);
 
     Route::resource('addkategori', \App\Http\Controllers\Admin\AddkategoriController::class);
     Route::post('tambahkategori', [\App\Http\Controllers\Admin\AddkategoriController::class, 'tambahkategori']);
 
-    Route::resource('addsub', \App\Http\Controllers\Admin\AddsubController::class); 
+    Route::resource('addsub', \App\Http\Controllers\Admin\AddsubController::class);
     Route::get('addsub/get_subklasifikasi/{id}', [\App\Http\Controllers\Admin\AddsubController::class, 'get_subklasifikasi']);
 
-    Route::resource('subklasifikasi', \App\Http\Controllers\Admin\SubklasifikasiController::class); 
+    Route::resource('subklasifikasi', \App\Http\Controllers\Admin\SubklasifikasiController::class);
 
-    Route::resource('member', \App\Http\Controllers\Admin\MemberController::class); 
+    Route::resource('member', \App\Http\Controllers\Admin\MemberController::class);
 
     Route::resource('input', \App\Http\Controllers\Admin\InputController::class);
 
     Route::resource('produk', \App\Http\Controllers\Admin\ProdukController::class);
     Route::post('admin/produk/import', [ProdukController::class, 'import'])->name('produk.import');
-    Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');        
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
     Route::get('/subklasifikasi/fetch', [ProdukController::class, 'fetch'])->name('subklasifikasi.fetch');
     Route::get('admin/produk/{id}/print', [ProdukController::class, 'print'])->name('produk.print');
     Route::get('admin/produk/{id}/cetak_barcode', [ProdukController::class, 'cetak_barcode'])->name('produk.cetak_barcode');
@@ -358,7 +361,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::delete('admin/permintaan_produk/{id}', [PermintaanProdukController::class, 'destroy'])->name('admin.permintaan_produk.destroy');
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Admin\Inquery_permintaanprodukController::class);
-  
+
 
     Route::resource('laporan_permintaanproduk', \App\Http\Controllers\Admin\Laporan_permintaanprodukController::class);
     Route::get('printReport1', [\App\Http\Controllers\Admin\Laporan_permintaanprodukController::class, 'printReport']);
@@ -570,11 +573,6 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::resource('inquery_perubahanharga', \App\Http\Controllers\Admin\Inquery_perubahanhargaController::class);
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Admin\Metode_pembayaranController::class);
-    
-
-
-
-
 });
 
 
@@ -646,7 +644,7 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
     Route::post('/toko_banjaran/inquery_penjualanprodukbanjaran/{id}/update', [Inquery_penjualanprodukbanjaranController::class, 'update'])->name('inquery_penjualanprodukbanjaran.update');
     Route::get('metodebayarbanjaran/metode/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_penjualanprodukbanjaranController::class, 'metode']);
     Route::delete('/toko_banjaran/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukbanjaranController::class, 'destroy'])
-    ->name('toko_banjaran.inquery_penjualanproduk.destroy');
+        ->name('toko_banjaran.inquery_penjualanproduk.destroy');
 
     Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_banjaran\Laporan_penjualanprodukController::class);
     Route::get('printReport', [\App\Http\Controllers\Toko_banjaran\Laporan_penjualanprodukController::class, 'printReport']);
@@ -666,7 +664,7 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
 
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_banjaran\Inquery_permintaanprodukController::class);
-  
+
 
     Route::resource('laporan_permintaanproduk', \App\Http\Controllers\Toko_banjaran\Laporan_permintaanprodukController::class);
     Route::get('printReport1', [\App\Http\Controllers\Toko_banjaran\Laporan_permintaanprodukController::class, 'printReport']);
@@ -678,7 +676,7 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_banjaran\Metode_pembayaranController::class);
 
- 
+
     Route::resource('stok_tokobanjaran', \App\Http\Controllers\Toko_banjaran\Stok_tokobanjaranController::class);
     Route::delete('/toko_banjaran/stok_tokobanjaran/deleteAll', [Stok_tokobanjaranController::class, 'deleteAll'])->name('stok_tokobanjaran.deleteAll');
     Route::post('toko_banjaran/stok_tokobanjaran/import', [Stok_tokobanjaranController::class, 'import'])->name('stok_tokobanjaran.import');
@@ -705,7 +703,7 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
 
 
     Route::resource('retur_tokobanjaran', \App\Http\Controllers\Toko_banjaran\Retur_tokobanjaranController::class);
-  
+
     Route::resource('inquery_returbanjaran', \App\Http\Controllers\Toko_banjaran\Inquery_returbanjaranController::class);
     Route::get('inquery_returbanjaran/unpost_retur/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_returbanjaranController::class, 'unpost_retur']);
     Route::get('inquery_returbanjaran/posting_retur/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_returbanjaranController::class, 'posting_retur']);
@@ -769,7 +767,7 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
     Route::get('printReportdeposit', [\App\Http\Controllers\Toko_banjaran\Laporan_depositbanjaranController::class, 'printReportdeposit']);
     Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_banjaran\Laporan_depositbanjaranController::class, 'printReportdepositrinci']);
     Route::get('printReportsaldo', [\App\Http\Controllers\Toko_banjaran\Laporan_depositbanjaranController::class, 'printReportsaldo']);
-    
+
     Route::resource('inquery_setorantunaibanjaran', \App\Http\Controllers\Toko_banjaran\Inquery_setorantunaibanjaranController::class);
     Route::get('/toko_banjaran/inquery_setorantunaibanjaran/{id}/print', [Inquery_setorantunaibanjaranController::class, 'print'])->name('inquery_setorantunaibanjaran.print');
 
@@ -787,13 +785,13 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
     Route::get('printExcelBmbanjaran', [Laporan_historibanjaranController::class, 'exportExcel'])->name('printExcelBmbanjaran');
     Route::get('printExcelBmpesananbanjaran', [Laporan_historibanjaranController::class, 'exportExcelBMpesanan'])->name('printExcelBmpesananbanjaran');
     Route::get('printExcelBmsemuabanjaran', [Laporan_historibanjaranController::class, 'exportExcelBMsemua'])->name('printExcelBmsemuabanjaran');
-    
+
     Route::get('barangKeluarbanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'barangKeluarbanjaran'])->name('barangKeluarbanjaran');
     Route::get('barangKeluarRincibanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'barangKeluarRincibanjaran'])->name('barangKeluarRincibanjaran');
     Route::get('printLaporanBKbanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'printLaporanBKbanjaran']);
     Route::get('printLaporanBKrincibanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'printLaporanBKrincibanjaran']);
     Route::get('printExcelBkbanjaran', [Laporan_historibanjaranController::class, 'exportExcelBK'])->name('printExcelBkbanjaran');
-    
+
     Route::get('barangReturbanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'barangReturbanjaran'])->name('barangReturbanjaran');
     Route::get('/print-report', [Laporan_historibanjaranController::class, 'printReport'])->name('print.report');
     Route::get('printLaporanBRbanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'printLaporanBRbanjaran']);
@@ -805,7 +803,10 @@ Route::middleware('toko_banjaran')->prefix('toko_banjaran')->group(function () {
     Route::get('printLaporanBObanjaran', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'printLaporanBObanjaran']);
     Route::get('printLaporanBObanjaranMasuk', [\App\Http\Controllers\Toko_banjaran\Laporan_historibanjaranController::class, 'printLaporanBObanjaranMasuk']);
 
-
+    Route::get('inquery_pelunasanbanjaran/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_pelunasanbanjaranController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasanbanjaran/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_pelunasanbanjaranController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasanbanjaran/deletedetail/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_pelunasanbanjaranController::class, 'deletedetail']);
+    Route::delete('inquery_pemesananbanjaran/deletedetail/{id}', [\App\Http\Controllers\Toko_banjaran\Inquery_pemesananprodukController::class, 'deletedetail']);
 });
 
 Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
@@ -870,7 +871,7 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
     Route::post('/toko_tegal/inquery_penjualanproduktegal/{id}/update', [Inquery_penjualanproduktegalController::class, 'update'])->name('inquery_penjualanproduktegal.update');
     Route::get('metodebayartegal/metode/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_penjualanproduktegalController::class, 'metode']);
     Route::delete('/toko_tegal/inquery_penjualanproduk/{id}', [Inquery_penjualanproduktegalController::class, 'destroy'])
-    ->name('toko_tegal.inquery_penjualanproduk.destroy');
+        ->name('toko_tegal.inquery_penjualanproduk.destroy');
 
     Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_tegal\Laporan_penjualanprodukController::class);
     Route::get('printReport', [\App\Http\Controllers\Toko_tegal\Laporan_penjualanprodukController::class, 'printReport']);
@@ -887,7 +888,7 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
 
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_tegal\Inquery_permintaanprodukController::class);
-  
+
     Route::resource('inquery_pelunasantegal', \App\Http\Controllers\Toko_tegal\Inquery_pelunasantegalController::class);
 
 
@@ -901,7 +902,7 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_tegal\Metode_pembayaranController::class);
 
- 
+
     Route::resource('stok_tokotegal', \App\Http\Controllers\Toko_tegal\Stok_tokotegalController::class);
     Route::delete('/toko_tegal/stok_tokotegal/deleteAll', [Stok_tokotegalController::class, 'deleteAll'])->name('stok_tokotegal.deleteAll');
     Route::post('toko_tegal/stok_tokotegal/import', [Stok_tokotegalController::class, 'import'])->name('stok_tokotegal.import');
@@ -926,7 +927,7 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
 
 
     Route::resource('retur_tokotegal', \App\Http\Controllers\Toko_tegal\Retur_tokotegalController::class);
-  
+
     Route::resource('inquery_returtegal', \App\Http\Controllers\Toko_tegal\Inquery_returtegalController::class);
     Route::get('inquery_returtegal/unpost_retur/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_returtegalController::class, 'unpost_retur']);
     Route::get('inquery_returtegal/posting_retur/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_returtegalController::class, 'posting_retur']);
@@ -994,7 +995,7 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
     Route::get('printReportdeposit', [\App\Http\Controllers\Toko_tegal\Laporan_deposittegalController::class, 'printReportdeposit']);
     Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_tegal\Laporan_deposittegalController::class, 'printReportdepositrinci']);
     Route::get('printReportsaldo', [\App\Http\Controllers\Toko_tegal\Laporan_deposittegalController::class, 'printReportsaldo']);
-    
+
     Route::resource('inquery_setorantunaitegal', \App\Http\Controllers\Toko_tegal\Inquery_setorantunaitegalController::class);
     Route::get('/toko_tegal/inquery_setorantunaitegal/{id}/print', [Inquery_setorantunaitegalController::class, 'print'])->name('inquery_setorantunaitegal.print');
 
@@ -1012,13 +1013,13 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
     Route::get('printExcelBmtegal', [Laporan_historitegalController::class, 'exportExcel'])->name('printExcelBmtegal');
     Route::get('printExcelBmpesanantegal', [Laporan_historitegalController::class, 'exportExcelBMpesanan'])->name('printExcelBmpesanantegal');
     Route::get('printExcelBmsemuategal', [Laporan_historitegalController::class, 'exportExcelBMsemua'])->name('printExcelBmsemuategal');
-    
+
     Route::get('barangKeluartegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'barangKeluartegal'])->name('barangKeluartegal');
     Route::get('barangKeluarRincitegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'barangKeluarRincitegal'])->name('barangKeluarRincitegal');
     Route::get('printLaporanBKtegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'printLaporanBKtegal']);
     Route::get('printLaporanBKrincitegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'printLaporanBKrincitegal']);
     Route::get('printExcelBktegal', [Laporan_historitegalController::class, 'exportExcelBK'])->name('printExcelBktegal');
-    
+
     Route::get('barangReturtegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'barangReturtegal'])->name('barangReturtegal');
     Route::get('/print-report', [Laporan_historitegalController::class, 'printReport'])->name('print.report');
     Route::get('printLaporanBRtegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'printLaporanBRtegal']);
@@ -1030,7 +1031,243 @@ Route::middleware('toko_tegal')->prefix('toko_tegal')->group(function () {
     Route::get('printLaporanBOtegal', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'printLaporanBOtegal']);
     Route::get('printLaporanBOtegalMasuk', [\App\Http\Controllers\Toko_tegal\Laporan_historitegalController::class, 'printLaporanBOtegalMasuk']);
 
+
+
+    Route::get('inquery_pelunasantegal/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_pelunasantegalController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasantegal/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_pelunasantegalController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasantegal/deletedetail/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_pelunasantegalController::class, 'deletedetail']);
+    Route::delete('inquery_pemesanantegal/deletedetail/{id}', [\App\Http\Controllers\Toko_tegal\Inquery_pelunasantegalController::class, 'deletedetail']);
 });
+
+Route::middleware('toko_slawi')->prefix('toko_slawi')->group(function () {
+
+    Route::get('/', [\App\Http\Controllers\Toko_slawi\DashboardController::class, 'index']);
+
+    Route::resource('pelanggan', \App\Http\Controllers\Toko_slawi\PelangganController::class);
+    Route::get('pelanggan/getpelanggan/{id}', [\App\Http\Controllers\Toko_slawi\PelangganController::class, 'getpelanggan']);
+    Route::get('pelanggan/cetak_pdf/{id}', [PelangganController::class, 'cetak_pdf'])->name('pelanggan.cetak_pdf');
+    Route::get('toko_slawi/pelanggan', [PelangganController::class, 'index'])->name('toko_slawi.pelanggan');
+
+    Route::resource('produk', \App\Http\Controllers\Toko_slawi\ProdukController::class);
+
+    Route::resource('pemesanan_produk', \App\Http\Controllers\Toko_slawi\PemesananprodukslawiController::class);
+    Route::get('/toko_slawi/pemesanan_produk/cetak/{id}', [PemesananprodukslawiController::class, 'cetak'])->name('toko_slawi.pemesanan_produk.cetak');
+    Route::get('/get-customer/{kode}', [PemesananprodukslawiController::class, 'getCustomerByKode']);
+    Route::get('pemesanan/pelanggan/{id}', [\App\Http\Controllers\Toko_slawi\PemesananprodukslawiController::class, 'pelanggan']);
+    Route::get('/get-customer-data', [PemesananprodukslawiController::class, 'getCustomerData'])->name('get.customer.data');
+    Route::get('/toko_slawi/pemesanan_produk/update/{id}', [PemesananprodukslawiController::class, 'edit'])->name('pemesanan_produk.update');
+    Route::get('/toko_slawi/pemesanan_produk/cetak-pdf{id}', [PemesananprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.pemesanan_produk.cetak-pdf');
+    Route::delete('toko_slawi/pemesanan_produk/{id}', [PemesananprodukslawiController::class, 'destroy'])->name('pemesanan_produk.destroy');
+    Route::get('/toko_slawi/pemesanan_produk/{id}/cetak', [PemesananprodukslawiController::class, 'cetak'])->name('toko_slawi.pemesanan_produk.cetak');
+    Route::get('/toko_slawi/pemesanan-produk/create', [PemesananprodukslawiController::class, 'create'])->name('pemesanan-produk.create');
+
+    Route::resource('inquery_pemesananproduk', \App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class);
+    Route::get('/toko_slawi/inquery_pemesananproduk', [Inquery_pemesananprodukController::class, 'index'])->name('toko_slawi.inquery_pemesananproduk.index');
+    Route::get('inquery_pemesananproduk/unpost_pemesananproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class, 'unpost_pemesananproduk']);
+    Route::get('inquery_pemesananproduk/posting_pemesananproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class, 'posting_pemesananproduk']);
+
+    Route::resource('laporan_pemesananprodukslw', \App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class);
+    Route::get('print_pemesanaslwl', [\App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class, 'print_pemesanan']);
+    Route::get('printReportpemesananslw', [Laporan_pemesananprodukslawiController::class, 'printReportPemesanan'])->name('printReportPemesanan');
+    Route::get('indexpemesananglobalslw', [\App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class, 'indexpemesananglobal']);
+    Route::get('printReportpemesananglobalslw', [Laporan_pemesananprodukslawiController::class, 'printReportpemesananglobalslw'])->name('printReportpemesananglobalslw');
+
+    Route::resource('penjualan_produk', \App\Http\Controllers\Toko_slawi\PenjualanprodukslawiController::class);
+    Route::get('/toko_slawi/penjualan_produk/cetak/{id}', [PenjualanprodukslawiController::class, 'cetak'])->name('toko_slawi.penjualan_produk.cetak');
+    Route::get('/toko_slawi/penjualan_produk/cetak-pdf{id}', [PenjualanprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.penjualan_produk.cetak-pdf');
+    Route::get('/toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'pelunasan'])->name('toko_slawi.penjualan_produk.pelunasan');
+    Route::get('toko_slawi/penjualan_produk/create', [PenjualanprodukslawiController::class, 'create'])->name('toko_slawi.penjualan_produk.create');
+    Route::get('/toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'pelunasan'])->name('toko_slawi.penjualan_produk.pelunasan');
+    Route::get('/products/{tokoId}', [PenjualanprodukslawiController::class, 'getProductsByToko'])->name('products.byToko');
+    Route::get('/fetch-data-by-kode', [PenjualanprodukslawiController::class, 'fetchDataByKode'])->name('toko_slawi.penjualan_produk.fetchData');
+    Route::get('/metodepembayaran/{id}', [PenjualanprodukslawiController::class, 'getMetodePembayaran']);
+    Route::get('metodebayar/metode/{id}', [\App\Http\Controllers\Toko_slawi\PenjualanprodukslawiController::class, 'metode']);
+    Route::post('toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'SimpanPelunasan'])->name('penjualan_produk.pelunasan.simpan');
+    Route::get('/get-product', [PenjualanprodukslawiController::class, 'getProductByKode']);
+    Route::get('/penjualan-produk/fetch-product-data', [PenjualanprodukslawiController::class, 'fetchProductData'])->name('toko_slawi.penjualan_produk.fetchProductData');
+    Route::get('/search-product', [PenjualanprodukslawiController::class, 'searchProduct']);
+
+
+    Route::resource('pelunasan_pemesananSlw', \App\Http\Controllers\Toko_slawi\PelunasanpemesananSlwController::class);
+    Route::get('/toko_slawi/pelunasan_pemesananSlw/cetak-pdf{id}', [PelunasanpemesananSlwController::class, 'cetakPdf'])->name('toko_slawi.pelunasan_pemesananSlw.cetak-pdf');
+    Route::get('/pelunasan-pemesananSlw/cetak/{id}', [PelunasanpemesananSlwController::class, 'cetak'])->name('toko_slawi.pelunasan_pemesananSlw.cetak');
+    Route::get('/pelunasan_pemesananSlw', [PelunasanpemesananSlwController::class, 'index'])->name('toko_slawi.pelunasan_pemesananSlw.index');
+
+    Route::resource('inquery_penjualanprodukslawi', \App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class);
+    Route::get('/toko_slawi/inquery_penjualanprodukslawi', [Inquery_penjualanprodukslawiController::class, 'index'])->name('toko_slawi.inquery_penjualanproduk.index');
+    Route::get('inquery_penjualanprodukslawi/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_penjualanprodukslawi/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'posting_penjualanproduk']);
+    Route::get('/toko_slawi/inquery_penjualanproduk/cetak-pdf{id}', [Inquery_penjualanprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.inquery_penjualanproduk.cetak-pdf');
+    Route::post('/toko_slawi/inquery_penjualanprodukslawi/{id}/update', [Inquery_penjualanprodukslawiController::class, 'update'])->name('inquery_penjualanprodukslawi.update');
+    Route::get('metodebayarslawi/metode/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'metode']);
+    Route::delete('/toko_slawi/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukslawiController::class, 'destroy'])
+        ->name('toko_slawi.inquery_penjualanproduk.destroy');
+
+    Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class);
+    Route::get('printReport', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'printReport']);
+    Route::get('printReportglobal', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'printReportglobal']);
+    Route::get('indexglobal', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'indexglobal']);
+
+    Route::resource('permintaan_produk', \App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class);
+    Route::post('toko_slawi/permintaan_produk', [PermintaanprodukslawiController::class, 'store']);
+    // Route::get('toko_slawi/permintaan_produk', [PermintaanprodukslawiController::class, 'show']);
+    Route::get('/permintaan-produk/{id}/print', [PermintaanprodukslawiController::class, 'print'])->name('permintaan_produk.print');
+    Route::get('permintaan_produk/unpost_permintaanproduk/{id}', [\App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class, 'unpost_permintaanproduk']);
+    Route::get('permintaan_produk/posting_permintaanproduk/{id}', [\App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class, 'posting_permintaanproduk']);
+    Route::post('toko_slawi/permintaan/importslawi', [PermintaanprodukslawiController::class, 'importslawi'])->name('permintaan.importslawi');
+
+
+    Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_slawi\Inquery_permintaanprodukController::class);
+
+    Route::resource('inquery_pelunasanslawi', \App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class);
+
+
+    Route::resource('laporan_permintaanproduk', \App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class);
+    Route::get('printReport1', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'printReport']);
+    Route::get('indexrinci', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'indexrinci']);
+    Route::get('printReportRinci', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'printReportRinci']);
+
+    Route::get('inquery_pengirimanbarangjadi/unpost_pengirimanbarangjadi/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pengirimanbarangjadiController::class, 'unpost_pengirimanbarangjadi']);
+    Route::get('inquery_pengirimanbarangjadi/posting_pengirimanbarangjadi/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pengirimanbarangjadiController::class, 'posting_pengirimanbarangjadi']);
+
+    Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_slawi\Metode_pembayaranController::class);
+
+
+    // Route::resource('stok_tokoslawi', \App\Http\Controllers\Toko_slawi\Stok_tokoslawiController::class);
+    // Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Stok_tokoslawiController::class, 'deleteAll'])->name('stok_tokoslawi.deleteAll');
+    // Route::post('toko_slawi/stok_tokoslawi/import', [Stok_tokoslawiController::class, 'import'])->name('stok_tokoslawi.import');
+    // Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Toko_slawiStok_tokoslawiController::class, 'deleteAll'])->name('stok_tokobanjaran.deleteAll');
+
+    Route::resource('stok_tokoslawi', \App\Http\Controllers\Toko_slawi\Stok_tokoslawiController::class);
+    Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Toko_slawiStok_tokoslawiController::class, 'deleteAll'])->name('stok_tokoslawi.deleteAll');
+    Route::post('toko_slawi/stok_tokoslawi/import', [Toko_slawiStok_tokoslawiController::class, 'import'])->name('stok_tokoslawi.import');
+
+    Route::resource('stokpesanan_tokoslawi', \App\Http\Controllers\Toko_slawi\Stokpesanan_tokoslawiController::class);
+    Route::delete('/toko_slawi/stokpesanan_tokoslawi/deleteAll', [Stokpesanan_tokoslawiController::class, 'deleteAll'])->name('stokpesanan_tokoslawi.deleteAll');
+
+    Route::resource('pengiriman_tokoslawi', \App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class);
+    Route::get('pengiriman_tokoslawi/unpost_pengiriman/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'unpost_pengiriman']);
+    Route::get('pengiriman_tokoslawi/posting_pengiriman/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'posting_pengiriman']);
+    Route::get('pengiriman_tokoslawi/unpost_pengirimanpemesanan/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'unpost_pengirimanpemesanan']);
+    Route::get('pengiriman_tokoslawi/posting_pengirimanpemesanan/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'posting_pengirimanpemesanan']);
+    Route::get('/pengiriman_tokoslawi/{id}/print', [Pengiriman_tokoslawiController::class, 'print'])->name('pengiriman_tokobanjaran.print');
+    Route::get('/toko_slawi/pengiriman_tokoslawi/printpemesanan/{id}', [Pengiriman_tokoslawiController::class, 'printpemesanan'])->name('pengiriman_tokoslawi.printpemesanan');
+    Route::get('toko_slawi/pengiriman_tokoslawi/index', [Pengiriman_tokoslawiController::class, 'index'])->name('toko_slawi.pengiriman_tokoslawi.index');
+    Route::get('/toko_slawi/pengiriman_tokoslawi/pengiriman_pemesanan', [Pengiriman_tokoslawiController::class, 'pengiriman_pemesanan'])->name('toko_slawi.pengiriman_tokoslawi.pengiriman_pemesanan');
+    Route::get('/toko_slawi/pengiriman_tokoslawi/showpemesanan/{id}', [Pengiriman_tokoslawiController::class, 'showpemesanan'])->name('toko_slawi.pengiriman_tokoslawi.showpemesanan');
+
+    Route::resource('pengirimanpemesanan_tokoslawi', \App\Http\Controllers\Toko_slawi\Pengirimanpemesanan_tokoslawiController::class);
+    Route::get('/pengirimanpemesanan_tokoslawi/print/{id}', [Pengirimanpemesanan_tokoslawiController::class, 'print'])->name('pengirimanpemesanan_tokoslawi.print');
+
+
+    Route::resource('retur_tokoslawi', \App\Http\Controllers\Toko_slawi\Retur_tokoslawiController::class);
+
+    Route::resource('inquery_returslawi', \App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class);
+    Route::get('inquery_returslawi/unpost_retur/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class, 'unpost_retur']);
+    Route::get('inquery_returslawi/posting_retur/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class, 'posting_retur']);
+    Route::get('/inquery_returslawi/{id}/print', [Inquery_returslawiController::class, 'print'])->name('inquery_returslawi.print');
+
+
+    Route::resource('pemindahan_tokoslawi', \App\Http\Controllers\Toko_slawi\Pemindahan_tokoslawiController::class);
+
+    Route::resource('inquery_pemindahanslawi', \App\Http\Controllers\Toko_slawi\Inquery_pemindahanslawiController::class);
+    Route::get('inquery_pemindahanslawi/posting_pemindahan/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemindahanslawiController::class, 'posting_pemindahan']);
+    Route::get('/inquery_pemindahanslawi/{id}/print', [Inquery_pemindahanslawiController::class, 'print'])->name('inquery_pemindahanslawi.print');
+
+    Route::resource('laporan_pemindahanslawi', \App\Http\Controllers\Toko_slawi\Laporan_pemindahanslawiController::class);
+    Route::get('printReportpemindahanSlw/{id}', [\App\Http\Controllers\Toko_slawi\Laporan_pemindahanslawiController::class, 'printReportpemindahanSlw']);
+
+    Route::resource('laporan_stoktokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class);
+    Route::get('printstoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReport']);
+    Route::get('printexcelstoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcel']);
+    Route::get('stoktokopesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'stoktokopesananslawi']);
+    Route::get('printstoktokopesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReportstokpesananslawi']);
+    Route::get('semuastoktokoslawi', [Laporan_stoktokoslawiController::class, 'semuaStokTokoSlawi'])->name('laporan.semuaStokTokoSlawi');
+    Route::get('printsemuastoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReportsemuastokslawi']);
+    Route::get('printexcelsemuaslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcelsemua']);
+    Route::get('printexcelstokpesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcelpesanan']);
+
+    Route::resource('laporan_pengirimantokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_pengirimantokoslawiController::class);
+    Route::get('printpengirimantokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_pengirimantokoslawiController::class, 'printReport']);
+
+
+    Route::resource('setoran_tokoslawi', \App\Http\Controllers\Toko_slawi\Setoran_tokoslawiController::class);
+    Route::post('toko_slawi/setoran_tokoslawi', [Setoran_tokoslawiController::class, 'store'])->name('setoran.store');
+    Route::post('/get-penjualanslawi', [Setoran_tokoslawiController::class, 'getdataslawi'])->name('getdataslawi');
+    Route::get('/print-penjualantoko-kotorslw', [Setoran_tokoslawiController::class, 'printPenjualanKotorslw'])->name('print.penjualantoko.kotorslw');
+    Route::get('/print-fakturpenjualantokoslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanslw'])->name('print.fakturpenjualantokoslw');
+    Route::get('/print-fakturpenjualanmesinedcslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanMesinedcslw'])->name('print.fakturpenjualanmesinedcslw');
+    Route::get('/print-fakturpemesananmesinedcslw', [Setoran_tokoslawiController::class, 'printFakturpemesananMesinedcslw'])->name('print.fakturpemesananmesinedcslw');
+    Route::get('/print-fakturpenjualanqrisslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanQrisslw'])->name('print.fakturpenjualanqrisslw');
+    Route::get('/print-fakturpemesananqrisslw', [Setoran_tokoslawiController::class, 'printFakturpemesananQrisslw'])->name('print.fakturpemesananqrisslw');
+    Route::get('/print-fakturpenjualantransferslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanTransferslw'])->name('print.fakturpenjualantransferslw');
+    Route::get('/print-fakturpemesanantransferslw', [Setoran_tokoslawiController::class, 'printFakturpemesananTransferslw'])->name('print.fakturpemesanantransferslw');
+    Route::get('/print-fakturpenjualangobizslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanGobizslw'])->name('print.fakturpenjualangobizslw');
+    Route::get('/print-fakturpemesanangobizslw', [Setoran_tokoslawiController::class, 'printFakturpemesananGobizslw'])->name('print.fakturpemesanangobizslw');
+    Route::get('/print-fakturdepositmasuktokoslw', [Setoran_tokoslawiController::class, 'printFakturdepositMasukslw'])->name('print.fakturdepositmasuktokoslw');
+    Route::get('/print-fakturdepositkeluartokoslw', [Setoran_tokoslawiController::class, 'printFakturdepositKeluarslw'])->name('print.fakturdepositkeluartokoslw');
+    Route::get('/print-penjualantoko-diskonslw', [Setoran_tokoslawiController::class, 'printPenjualanDiskonslw'])->name('print.penjualantoko.diskonslw');
+    Route::get('/print-penjualantoko-bersihslw', [Setoran_tokoslawiController::class, 'printPenjualanBersihslw'])->name('print.penjualantoko.bersihslw');
+    Route::get('penjualanprodukslw/detail/{id}', [Setoran_tokoslawiController::class, 'show'])->name('penjualanprodukslw.detail');
+    Route::get('penjualanprodukslw/detaildepositkeluar/{id}', [Setoran_tokoslawiController::class, 'show2'])->name('penjualanprodukslw.detaildepositkeluar');
+    Route::get('pemesananprodukslw/detailpemesanan/{id}', [Setoran_tokoslawiController::class, 'show1'])->name('pemesananprodukslw.detailpemesanan');
+
+    Route::resource('laporan_setorantokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_setoranpenjualanslwController::class);
+    Route::get('printReportsetoranslw', [Laporan_setoranpenjualanslwController::class, 'printReportsetoranslw'])->name('laporan_setoranpenjualan.print');
+
+    Route::resource('inquery_depositslawi', \App\Http\Controllers\Toko_slawi\Inquery_depositslawiController::class);
+
+    Route::resource('laporan_depositslawi', \App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class);
+    Route::get('indexrinci', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'indexrinci']);
+    Route::get('indexsaldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'indexsaldo']);
+    Route::get('saldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'saldo']);
+    Route::get('printReportdeposit', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportdeposit']);
+    Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportdepositrinci']);
+    Route::get('printReportsaldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportsaldo']);
+
+    Route::resource('inquery_setorantunaislawi', \App\Http\Controllers\Toko_slawi\Inquery_setorantunaislawiController::class);
+    Route::get('/toko_slawi/inquery_setorantunaislawi/{id}/print', [Inquery_setorantunaislawiController::class, 'print'])->name('inquery_setorantunaislawi.print');
+
+    Route::resource('laporan_setorantunaislawi', \App\Http\Controllers\Toko_slawi\Laporan_setorantunaislawiController::class);
+
+    Route::resource('laporan_returslawi', \App\Http\Controllers\Toko_slawi\Laporan_returslawiController::class);
+    Route::get('printReportreturslawi', [\App\Http\Controllers\Toko_slawi\Laporan_returslawiController::class, 'printReportreturslawi']);
+
+    Route::resource('laporan_historislawi', \App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class);
+    Route::get('barangMasukpesananslawi', [Laporan_historislawiController::class, 'barangMasukpesananslawi'])->name('barangMasukpesananslawi');
+    Route::get('barangMasuksemuaslawi', [Laporan_historislawiController::class, 'barangMasuksemuaslawi'])->name('barangMasuksemuaslawi');
+    Route::get('printLaporanBmslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmslawi']);
+    Route::get('printLaporanBmpesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmpesananslawi']);
+    Route::get('printLaporanBmsemuaslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmsemuaslawi']);
+    Route::get('printExcelBmslawi', [Laporan_historislawiController::class, 'exportExcelslawi'])->name('printExcelBmslawi');
+    Route::get('printExcelBmpesananslawi', [Laporan_historislawiController::class, 'exportExcelBMpesananslawi'])->name('printExcelBmpesananslawi');
+    Route::get('printExcelBmsemuaslawi', [Laporan_historislawiController::class, 'exportExcelBMsemuaslawi'])->name('printExcelBmsemuaslawi');
+
+    Route::get('barangKeluarslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangKeluarslawi'])->name('barangKeluarslawi');
+    Route::get('barangKeluarRincislawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangKeluarRincislawi'])->name('barangKeluarRincislawi');
+    Route::get('printLaporanBKslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBKslawi']);
+    Route::get('printLaporanBKrincislawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBKrincislawi']);
+    Route::get('printExcelBkslawi', [Laporan_historislawiController::class, 'exportExcelBK'])->name('printExcelBkslawi');
+
+    // Route::get('barangReturbanjaran', [\App\Http\Controllers\Toko_slawi\Laporan_historibanjaranController::class, 'barangReturbanjaran']);
+    Route::get('barangReturslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangReturslawi'])->name('barangReturslawi');
+    Route::get('/print-report', [Laporan_historislawiController::class, 'printReport'])->name('print.report');
+    Route::get('printLaporanBRslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBRslawi']);
+    Route::get('printExcelBrslawi', [Laporan_historislawiController::class, 'exportExcelBR'])->name('printExcelBrslawi');
+    Route::get('/get-produk-by-klasifikasi/{id}', [Laporan_historislawiController::class, 'getByKlasifikasi'])->name('getProdukByKlasifikasi');
+
+    Route::get('barangOperslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangOperslawi'])->name('barangOperslawi');
+    Route::get('barangOperanslawiMasuk', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangOperanslawiMasuk'])->name('barangOperanslawiMasuk');
+    Route::get('printLaporanBOslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBOslawi']);
+    Route::get('printLaporanBOslawiMasuk', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBOslawiMasuk']);
+
+
+    Route::get('inquery_pelunasanslawi/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasanslawi/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasanslawi/deletedetail/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class, 'deletedetail']);
+    Route::delete('inquery_pemesananslawi/deletedetail/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class, 'deletedetail']);
+});
+
 
 Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('/', [\App\Http\Controllers\Toko_pemalang\DashboardController::class, 'index']);
@@ -1094,7 +1331,7 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::post('/toko_pemalang/inquery_penjualanprodukpemalang/{id}/update', [Inquery_penjualanprodukpemalangController::class, 'update'])->name('inquery_penjualanprodukpemalang.update');
     Route::get('metodebayarpemalang/metode/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_penjualanprodukpemalangController::class, 'metode']);
     Route::delete('/toko_pemalang/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukpemalangController::class, 'destroy'])
-    ->name('toko_pemalang.inquery_penjualanproduk.destroy');
+        ->name('toko_pemalang.inquery_penjualanproduk.destroy');
 
     Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_pemalang\Laporan_penjualanprodukController::class);
     Route::get('printReport', [\App\Http\Controllers\Toko_pemalang\Laporan_penjualanprodukController::class, 'printReport']);
@@ -1114,7 +1351,7 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
 
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_pemalang\Inquery_permintaanprodukController::class);
-  
+
 
     Route::resource('laporan_permintaanproduk', \App\Http\Controllers\Toko_pemalang\Laporan_permintaanprodukController::class);
     Route::get('printReport1', [\App\Http\Controllers\Toko_pemalang\Laporan_permintaanprodukController::class, 'printReport']);
@@ -1126,7 +1363,7 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_pemalang\Metode_pembayaranController::class);
 
- 
+
     Route::resource('stok_tokopemalang', \App\Http\Controllers\Toko_pemalang\Stok_tokopemalangController::class);
     Route::delete('/toko_pemalang/stok_tokopemalang/deleteAll', [Stok_tokopemalangController::class, 'deleteAll'])->name('stok_tokopemalang.deleteAll');
     Route::post('toko_pemalang/stok_tokopemalang/import', [Stok_tokopemalangController::class, 'import'])->name('stok_tokopemalang.import');
@@ -1154,7 +1391,7 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
 
 
     Route::resource('retur_tokopemalang', \App\Http\Controllers\Toko_pemalang\Retur_tokopemalangController::class);
-  
+
     Route::resource('inquery_returpemalang', \App\Http\Controllers\Toko_pemalang\Inquery_returpemalangController::class);
     Route::get('inquery_returpemalang/unpost_retur/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_returpemalangController::class, 'unpost_retur']);
     Route::get('inquery_returpemalang/posting_retur/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_returpemalangController::class, 'posting_retur']);
@@ -1218,7 +1455,7 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('printReportdeposit', [\App\Http\Controllers\Toko_pemalang\Laporan_depositpemalangController::class, 'printReportdeposit']);
     Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_pemalang\Laporan_depositpemalangController::class, 'printReportdepositrinci']);
     Route::get('printReportsaldo', [\App\Http\Controllers\Toko_pemalang\Laporan_depositpemalangController::class, 'printReportsaldo']);
-    
+
     Route::resource('inquery_setorantunaipemalang', \App\Http\Controllers\Toko_pemalang\Inquery_setorantunaipemalangController::class);
     Route::get('/toko_pemalang/inquery_setorantunaipemalang/{id}/print', [Inquery_setorantunaipemalangController::class, 'print'])->name('inquery_setorantunaipemalang.print');
 
@@ -1236,13 +1473,13 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('printExcelBmpemalang', [Laporan_historipemalangController::class, 'exportExcel'])->name('printExcelBmpemalang');
     Route::get('printExcelBmpesananpemalang', [Laporan_historipemalangController::class, 'exportExcelBMpesanan'])->name('printExcelBmpesananpemalang');
     Route::get('printExcelBmsemuapemalang', [Laporan_historipemalangController::class, 'exportExcelBMsemua'])->name('printExcelBmsemuapemalang');
-    
+
     Route::get('barangKeluarpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'barangKeluarpemalang'])->name('barangKeluarpemalang');
     Route::get('barangKeluarRincipemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'barangKeluarRincipemalang'])->name('barangKeluarRincipemalang');
     Route::get('printLaporanBKpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBKpemalang']);
     Route::get('printLaporanBKrincipemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBKrincipemalang']);
     Route::get('printExcelBkpemalang', [Laporan_historipemalangController::class, 'exportExcelBK'])->name('printExcelBkpemalang');
-    
+
     Route::get('barangReturpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'barangReturpemalang'])->name('barangReturpemalang');
     Route::get('/print-report', [Laporan_historipemalangController::class, 'printReport'])->name('print.report');
     Route::get('printLaporanBRpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBRpemalang']);
@@ -1253,7 +1490,6 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('barangOperanpemalangMasuk', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'barangOperapemalangMasuk'])->name('barangOperanpemalangMasuk');
     Route::get('printLaporanBOpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBOpemalang']);
     Route::get('printLaporanBOpemalangMasuk', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBOpemalangMasuk']);
-
 });
 
 
@@ -1319,7 +1555,7 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
     Route::post('/toko_bumiayu/inquery_penjualanprodukbumiayu/{id}/update', [Inquery_penjualanprodukbumiayuController::class, 'update'])->name('inquery_penjualanprodukbumiayu.update');
     Route::get('metodebayarbumiayu/metode/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_penjualanprodukbumiayuController::class, 'metode']);
     Route::delete('/toko_bumiayu/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukbumiayuController::class, 'destroy'])
-    ->name('toko_bumiayu.inquery_penjualanproduk.destroy');
+        ->name('toko_bumiayu.inquery_penjualanproduk.destroy');
 
     Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_bumiayu\Laporan_penjualanprodukController::class);
     Route::get('printReport', [\App\Http\Controllers\Toko_bumiayu\Laporan_penjualanprodukController::class, 'printReport']);
@@ -1336,7 +1572,7 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
 
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_bumiayu\Inquery_permintaanprodukController::class);
-  
+
     Route::resource('inquery_pelunasanbumiayu', \App\Http\Controllers\Toko_bumiayu\Inquery_pelunasanbumiayuController::class);
 
 
@@ -1350,7 +1586,7 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_bumiayu\Metode_pembayaranController::class);
 
- 
+
     Route::resource('stok_tokobumiayu', \App\Http\Controllers\Toko_bumiayu\Stok_tokobumiayuController::class);
     Route::delete('/toko_bumiayu/stok_tokobumiayu/deleteAll', [Stok_tokobumiayuController::class, 'deleteAll'])->name('stok_tokobumiayu.deleteAll');
     Route::post('toko_bumiayu/stok_tokobumiayu/import', [Stok_tokobumiayuController::class, 'import'])->name('stok_tokobumiayu.import');
@@ -1375,7 +1611,7 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
 
 
     Route::resource('retur_tokobumiayu', \App\Http\Controllers\Toko_bumiayu\Retur_tokobumiayuController::class);
-  
+
     Route::resource('inquery_returbumiayu', \App\Http\Controllers\Toko_bumiayu\Inquery_returbumiayuController::class);
     Route::get('inquery_returbumiayu/unpost_retur/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_returbumiayuController::class, 'unpost_retur']);
     Route::get('inquery_returbumiayu/posting_retur/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_returbumiayuController::class, 'posting_retur']);
@@ -1439,7 +1675,7 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
     Route::get('printReportdeposit', [\App\Http\Controllers\Toko_bumiayu\Laporan_depositbumiayuController::class, 'printReportdeposit']);
     Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_bumiayu\Laporan_depositbumiayuController::class, 'printReportdepositrinci']);
     Route::get('printReportsaldo', [\App\Http\Controllers\Toko_bumiayu\Laporan_depositbumiayuController::class, 'printReportsaldo']);
-    
+
     Route::resource('inquery_setorantunaibumiayu', \App\Http\Controllers\Toko_bumiayu\Inquery_setorantunaibumiayuController::class);
     Route::get('/toko_bumiayu/inquery_setorantunaibumiayu/{id}/print', [Inquery_setorantunaibumiayuController::class, 'print'])->name('inquery_setorantunaibumiayu.print');
 
@@ -1457,13 +1693,13 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
     Route::get('printExcelBmbumiayu', [Laporan_historibumiayuController::class, 'exportExcel'])->name('printExcelBmbumiayu');
     Route::get('printExcelBmpesananbumiayu', [Laporan_historibumiayuController::class, 'exportExcelBMpesanan'])->name('printExcelBmpesananbumiayu');
     Route::get('printExcelBmsemuabumiayu', [Laporan_historibumiayuController::class, 'exportExcelBMsemua'])->name('printExcelBmsemuabumiayu');
-    
+
     Route::get('barangKeluarbumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'barangKeluarbumiayu'])->name('barangKeluarbumiayu');
     Route::get('barangKeluarRincibumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'barangKeluarRincibumiayu'])->name('barangKeluarRincibumiayu');
     Route::get('printLaporanBKbumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBKbumiayu']);
     Route::get('printLaporanBKrincibumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBKrincibumiayu']);
     Route::get('printExcelBkbumiayu', [Laporan_historibumiayuController::class, 'exportExcelBK'])->name('printExcelBkbumiayu');
-    
+
     Route::get('barangReturbumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'barangReturbumiayu'])->name('barangReturbumiayu');
     Route::get('/print-report', [Laporan_historibumiayuController::class, 'printReport'])->name('print.report');
     Route::get('printLaporanBRbumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBRbumiayu']);
@@ -1474,231 +1710,6 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
     Route::get('barangOperanbumiayuMasuk', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'barangOperanbumiayuMasuk'])->name('barangOperanbumiayuMasuk');
     Route::get('printLaporanBObumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBObumiayu']);
     Route::get('printLaporanBObumiayuMasuk', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBObumiayuMasuk']);
-
-});
-
-Route::middleware('toko_slawi')->prefix('toko_slawi')->group(function () {
-
-    Route::get('/', [\App\Http\Controllers\Toko_slawi\DashboardController::class, 'index']);
-
-    Route::resource('pelanggan', \App\Http\Controllers\Toko_slawi\PelangganController::class);
-    Route::get('pelanggan/getpelanggan/{id}', [\App\Http\Controllers\Toko_slawi\PelangganController::class, 'getpelanggan']);
-    Route::get('pelanggan/cetak_pdf/{id}', [PelangganController::class, 'cetak_pdf'])->name('pelanggan.cetak_pdf');
-    Route::get('toko_slawi/pelanggan', [PelangganController::class, 'index'])->name('toko_slawi.pelanggan');
-
-    Route::resource('produk', \App\Http\Controllers\Toko_slawi\ProdukController::class);
-
-    Route::resource('pemesanan_produk', \App\Http\Controllers\Toko_slawi\PemesananprodukslawiController::class);
-    Route::get('/toko_slawi/pemesanan_produk/cetak/{id}', [PemesananprodukslawiController::class, 'cetak'])->name('toko_slawi.pemesanan_produk.cetak');
-    Route::get('/get-customer/{kode}', [PemesananprodukslawiController::class, 'getCustomerByKode']);
-    Route::get('pemesanan/pelanggan/{id}', [\App\Http\Controllers\Toko_slawi\PemesananprodukslawiController::class, 'pelanggan']);
-    Route::get('/get-customer-data', [PemesananprodukslawiController::class, 'getCustomerData'])->name('get.customer.data');
-    Route::get('/toko_slawi/pemesanan_produk/update/{id}', [PemesananprodukslawiController::class, 'edit'])->name('pemesanan_produk.update');
-    Route::get('/toko_slawi/pemesanan_produk/cetak-pdf{id}', [PemesananprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.pemesanan_produk.cetak-pdf');
-    Route::delete('toko_slawi/pemesanan_produk/{id}', [PemesananprodukslawiController::class, 'destroy'])->name('pemesanan_produk.destroy');
-    Route::get('/toko_slawi/pemesanan_produk/{id}/cetak', [PemesananprodukslawiController::class, 'cetak'])->name('toko_slawi.pemesanan_produk.cetak');
-    Route::get('/toko_slawi/pemesanan-produk/create', [PemesananprodukslawiController::class, 'create'])->name('pemesanan-produk.create');
-
-    Route::resource('inquery_pemesananproduk', \App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class);
-    Route::get('/toko_slawi/inquery_pemesananproduk', [Inquery_pemesananprodukController::class, 'index'])->name('toko_slawi.inquery_pemesananproduk.index');
-    Route::get('inquery_pemesananproduk/unpost_pemesananproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class, 'unpost_pemesananproduk']);
-    Route::get('inquery_pemesananproduk/posting_pemesananproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemesananprodukController::class, 'posting_pemesananproduk']);
-
-    Route::resource('laporan_pemesananprodukslw', \App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class);
-    Route::get('print_pemesanaslwl', [\App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class, 'print_pemesanan']);
-    Route::get('printReportpemesananslw', [Laporan_pemesananprodukslawiController::class, 'printReportPemesanan'])->name('printReportPemesanan');
-    Route::get('indexpemesananglobalslw', [\App\Http\Controllers\Toko_slawi\Laporan_pemesananprodukslawiController::class, 'indexpemesananglobal']);
-    Route::get('printReportpemesananglobalslw', [Laporan_pemesananprodukslawiController::class, 'printReportpemesananglobalslw'])->name('printReportpemesananglobalslw');
-
-    Route::resource('penjualan_produk', \App\Http\Controllers\Toko_slawi\PenjualanprodukslawiController::class);
-    Route::get('/toko_slawi/penjualan_produk/cetak/{id}', [PenjualanprodukslawiController::class, 'cetak'])->name('toko_slawi.penjualan_produk.cetak');
-    Route::get('/toko_slawi/penjualan_produk/cetak-pdf{id}', [PenjualanprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.penjualan_produk.cetak-pdf');
-    Route::get('/toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'pelunasan'])->name('toko_slawi.penjualan_produk.pelunasan');
-    Route::get('toko_slawi/penjualan_produk/create', [PenjualanprodukslawiController::class, 'create'])->name('toko_slawi.penjualan_produk.create');
-    Route::get('/toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'pelunasan'])->name('toko_slawi.penjualan_produk.pelunasan');
-    Route::get('/products/{tokoId}', [PenjualanprodukslawiController::class, 'getProductsByToko'])->name('products.byToko');
-    Route::get('/fetch-data-by-kode', [PenjualanprodukslawiController::class, 'fetchDataByKode'])->name('toko_slawi.penjualan_produk.fetchData');
-    Route::get('/metodepembayaran/{id}', [PenjualanprodukslawiController::class, 'getMetodePembayaran']);
-    Route::get('metodebayar/metode/{id}', [\App\Http\Controllers\Toko_slawi\PenjualanprodukslawiController::class, 'metode']);
-    Route::post('toko_slawi/penjualan_produk/pelunasan', [PenjualanprodukslawiController::class, 'SimpanPelunasan'])->name('penjualan_produk.pelunasan.simpan');
-    Route::get('/get-product', [PenjualanprodukslawiController::class, 'getProductByKode']);
-    Route::get('/penjualan-produk/fetch-product-data', [PenjualanprodukslawiController::class, 'fetchProductData'])->name('toko_slawi.penjualan_produk.fetchProductData');
-    Route::get('/search-product', [PenjualanprodukslawiController::class, 'searchProduct']);
-
-
-    Route::resource('pelunasan_pemesananSlw', \App\Http\Controllers\Toko_slawi\PelunasanpemesananSlwController::class);
-    Route::get('/toko_slawi/pelunasan_pemesananSlw/cetak-pdf{id}', [PelunasanpemesananSlwController::class, 'cetakPdf'])->name('toko_slawi.pelunasan_pemesananSlw.cetak-pdf');
-    Route::get('/pelunasan-pemesananSlw/cetak/{id}', [PelunasanpemesananSlwController::class, 'cetak'])->name('toko_slawi.pelunasan_pemesananSlw.cetak');
-    Route::get('/pelunasan_pemesananSlw', [PelunasanpemesananSlwController::class, 'index'])->name('toko_slawi.pelunasan_pemesananSlw.index');
-
-    Route::resource('inquery_penjualanprodukslawi', \App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class);
-    Route::get('/toko_slawi/inquery_penjualanprodukslawi', [Inquery_penjualanprodukslawiController::class, 'index'])->name('toko_slawi.inquery_penjualanproduk.index');
-    Route::get('inquery_penjualanprodukslawi/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'unpost_penjualanproduk']);
-    Route::get('inquery_penjualanprodukslawi/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'posting_penjualanproduk']);
-    Route::get('/toko_slawi/inquery_penjualanproduk/cetak-pdf{id}', [Inquery_penjualanprodukslawiController::class, 'cetakPdf'])->name('toko_slawi.inquery_penjualanproduk.cetak-pdf');
-    Route::post('/toko_slawi/inquery_penjualanprodukslawi/{id}/update', [Inquery_penjualanprodukslawiController::class, 'update'])->name('inquery_penjualanprodukslawi.update');
-    Route::get('metodebayarslawi/metode/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_penjualanprodukslawiController::class, 'metode']);
-    Route::delete('/toko_slawi/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukslawiController::class, 'destroy'])
-    ->name('toko_slawi.inquery_penjualanproduk.destroy');
-
-    Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class);
-    Route::get('printReport', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'printReport']);
-    Route::get('printReportglobal', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'printReportglobal']);
-    Route::get('indexglobal', [\App\Http\Controllers\Toko_slawi\Laporan_penjualanprodukController::class, 'indexglobal']);
-
-    Route::resource('permintaan_produk', \App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class);
-    Route::post('toko_slawi/permintaan_produk', [PermintaanprodukslawiController::class, 'store']);
-    // Route::get('toko_slawi/permintaan_produk', [PermintaanprodukslawiController::class, 'show']);
-    Route::get('/permintaan-produk/{id}/print', [PermintaanprodukslawiController::class, 'print'])->name('permintaan_produk.print');
-    Route::get('permintaan_produk/unpost_permintaanproduk/{id}', [\App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class, 'unpost_permintaanproduk']);
-    Route::get('permintaan_produk/posting_permintaanproduk/{id}', [\App\Http\Controllers\Toko_slawi\PermintaanprodukslawiController::class, 'posting_permintaanproduk']);
-    Route::post('toko_slawi/permintaan/importslawi', [PermintaanprodukslawiController::class, 'importslawi'])->name('permintaan.importslawi');
-
-
-    Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_slawi\Inquery_permintaanprodukController::class);
-  
-    Route::resource('inquery_pelunasanslawi', \App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class);
-
-
-    Route::resource('laporan_permintaanproduk', \App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class);
-    Route::get('printReport1', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'printReport']);
-    Route::get('indexrinci', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'indexrinci']);
-    Route::get('printReportRinci', [\App\Http\Controllers\Toko_slawi\Laporan_permintaanprodukController::class, 'printReportRinci']);
-
-    Route::get('inquery_pengirimanbarangjadi/unpost_pengirimanbarangjadi/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pengirimanbarangjadiController::class, 'unpost_pengirimanbarangjadi']);
-    Route::get('inquery_pengirimanbarangjadi/posting_pengirimanbarangjadi/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pengirimanbarangjadiController::class, 'posting_pengirimanbarangjadi']);
-
-    Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_slawi\Metode_pembayaranController::class);
-
- 
-    // Route::resource('stok_tokoslawi', \App\Http\Controllers\Toko_slawi\Stok_tokoslawiController::class);
-    // Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Stok_tokoslawiController::class, 'deleteAll'])->name('stok_tokoslawi.deleteAll');
-    // Route::post('toko_slawi/stok_tokoslawi/import', [Stok_tokoslawiController::class, 'import'])->name('stok_tokoslawi.import');
-    // Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Toko_slawiStok_tokoslawiController::class, 'deleteAll'])->name('stok_tokobanjaran.deleteAll');
- 
-    Route::resource('stok_tokoslawi', \App\Http\Controllers\Toko_slawi\Stok_tokoslawiController::class);
-    Route::delete('/toko_slawi/stok_tokoslawi/deleteAll', [Toko_slawiStok_tokoslawiController::class, 'deleteAll'])->name('stok_tokoslawi.deleteAll');
-    Route::post('toko_slawi/stok_tokoslawi/import', [Toko_slawiStok_tokoslawiController::class, 'import'])->name('stok_tokoslawi.import');
-
-    Route::resource('stokpesanan_tokoslawi', \App\Http\Controllers\Toko_slawi\Stokpesanan_tokoslawiController::class);
-    Route::delete('/toko_slawi/stokpesanan_tokoslawi/deleteAll', [Stokpesanan_tokoslawiController::class, 'deleteAll'])->name('stokpesanan_tokoslawi.deleteAll');
-
-    Route::resource('pengiriman_tokoslawi', \App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class);
-    Route::get('pengiriman_tokoslawi/unpost_pengiriman/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'unpost_pengiriman']);
-    Route::get('pengiriman_tokoslawi/posting_pengiriman/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'posting_pengiriman']);
-    Route::get('pengiriman_tokoslawi/unpost_pengirimanpemesanan/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'unpost_pengirimanpemesanan']);
-    Route::get('pengiriman_tokoslawi/posting_pengirimanpemesanan/{id}', [\App\Http\Controllers\Toko_slawi\Pengiriman_tokoslawiController::class, 'posting_pengirimanpemesanan']);
-    Route::get('/pengiriman_tokoslawi/{id}/print', [Pengiriman_tokoslawiController::class, 'print'])->name('pengiriman_tokobanjaran.print');
-    Route::get('/toko_slawi/pengiriman_tokoslawi/printpemesanan/{id}', [Pengiriman_tokoslawiController::class, 'printpemesanan'])->name('pengiriman_tokoslawi.printpemesanan');
-    Route::get('toko_slawi/pengiriman_tokoslawi/index', [Pengiriman_tokoslawiController::class, 'index'])->name('toko_slawi.pengiriman_tokoslawi.index');
-    Route::get('/toko_slawi/pengiriman_tokoslawi/pengiriman_pemesanan', [Pengiriman_tokoslawiController::class, 'pengiriman_pemesanan'])->name('toko_slawi.pengiriman_tokoslawi.pengiriman_pemesanan');
-    Route::get('/toko_slawi/pengiriman_tokoslawi/showpemesanan/{id}', [Pengiriman_tokoslawiController::class, 'showpemesanan'])->name('toko_slawi.pengiriman_tokoslawi.showpemesanan');
-
-    Route::resource('pengirimanpemesanan_tokoslawi', \App\Http\Controllers\Toko_slawi\Pengirimanpemesanan_tokoslawiController::class);
-    Route::get('/pengirimanpemesanan_tokoslawi/print/{id}', [Pengirimanpemesanan_tokoslawiController::class, 'print'])->name('pengirimanpemesanan_tokoslawi.print');
-
-
-    Route::resource('retur_tokoslawi', \App\Http\Controllers\Toko_slawi\Retur_tokoslawiController::class);
-  
-    Route::resource('inquery_returslawi', \App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class);
-    Route::get('inquery_returslawi/unpost_retur/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class, 'unpost_retur']);
-    Route::get('inquery_returslawi/posting_retur/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_returslawiController::class, 'posting_retur']);
-    Route::get('/inquery_returslawi/{id}/print', [Inquery_returslawiController::class, 'print'])->name('inquery_returslawi.print');
-
-
-    Route::resource('pemindahan_tokoslawi', \App\Http\Controllers\Toko_slawi\Pemindahan_tokoslawiController::class);
-
-    Route::resource('inquery_pemindahanslawi', \App\Http\Controllers\Toko_slawi\Inquery_pemindahanslawiController::class);
-    Route::get('inquery_pemindahanslawi/posting_pemindahan/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pemindahanslawiController::class, 'posting_pemindahan']);
-    Route::get('/inquery_pemindahanslawi/{id}/print', [Inquery_pemindahanslawiController::class, 'print'])->name('inquery_pemindahanslawi.print');
-
-    Route::resource('laporan_pemindahanslawi', \App\Http\Controllers\Toko_slawi\Laporan_pemindahanslawiController::class);
-    Route::get('printReportpemindahanSlw/{id}', [\App\Http\Controllers\Toko_slawi\Laporan_pemindahanslawiController::class, 'printReportpemindahanSlw']);
-
-    Route::resource('laporan_stoktokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class);
-    Route::get('printstoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReport']);
-    Route::get('printexcelstoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcel']);
-    Route::get('stoktokopesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'stoktokopesananslawi']);
-    Route::get('printstoktokopesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReportstokpesananslawi']);
-    Route::get('semuastoktokoslawi', [Laporan_stoktokoslawiController::class, 'semuaStokTokoSlawi'])->name('laporan.semuaStokTokoSlawi');
-    Route::get('printsemuastoktokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'printReportsemuastokslawi']);
-    Route::get('printexcelsemuaslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcelsemua']);
-    Route::get('printexcelstokpesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_stoktokoslawiController::class, 'exportExcelpesanan']);
-
-    Route::resource('laporan_pengirimantokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_pengirimantokoslawiController::class);
-    Route::get('printpengirimantokoslawi', [\App\Http\Controllers\Toko_slawi\Laporan_pengirimantokoslawiController::class, 'printReport']);
-
-
-    Route::resource('setoran_tokoslawi', \App\Http\Controllers\Toko_slawi\Setoran_tokoslawiController::class);
-    Route::post('toko_slawi/setoran_tokoslawi', [Setoran_tokoslawiController::class, 'store'])->name('setoran.store');
-    Route::post('/get-penjualanslawi', [Setoran_tokoslawiController::class, 'getdataslawi'])->name('getdataslawi');
-    Route::get('/print-penjualantoko-kotorslw', [Setoran_tokoslawiController::class, 'printPenjualanKotorslw'])->name('print.penjualantoko.kotorslw');
-    Route::get('/print-fakturpenjualantokoslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanslw'])->name('print.fakturpenjualantokoslw');
-    Route::get('/print-fakturpenjualanmesinedcslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanMesinedcslw'])->name('print.fakturpenjualanmesinedcslw');
-    Route::get('/print-fakturpemesananmesinedcslw', [Setoran_tokoslawiController::class, 'printFakturpemesananMesinedcslw'])->name('print.fakturpemesananmesinedcslw');
-    Route::get('/print-fakturpenjualanqrisslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanQrisslw'])->name('print.fakturpenjualanqrisslw');
-    Route::get('/print-fakturpemesananqrisslw', [Setoran_tokoslawiController::class, 'printFakturpemesananQrisslw'])->name('print.fakturpemesananqrisslw');
-    Route::get('/print-fakturpenjualantransferslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanTransferslw'])->name('print.fakturpenjualantransferslw');
-    Route::get('/print-fakturpemesanantransferslw', [Setoran_tokoslawiController::class, 'printFakturpemesananTransferslw'])->name('print.fakturpemesanantransferslw');
-    Route::get('/print-fakturpenjualangobizslw', [Setoran_tokoslawiController::class, 'printFakturpenjualanGobizslw'])->name('print.fakturpenjualangobizslw');
-    Route::get('/print-fakturpemesanangobizslw', [Setoran_tokoslawiController::class, 'printFakturpemesananGobizslw'])->name('print.fakturpemesanangobizslw');
-    Route::get('/print-fakturdepositmasuktokoslw', [Setoran_tokoslawiController::class, 'printFakturdepositMasukslw'])->name('print.fakturdepositmasuktokoslw');
-    Route::get('/print-fakturdepositkeluartokoslw', [Setoran_tokoslawiController::class, 'printFakturdepositKeluarslw'])->name('print.fakturdepositkeluartokoslw');
-    Route::get('/print-penjualantoko-diskonslw', [Setoran_tokoslawiController::class, 'printPenjualanDiskonslw'])->name('print.penjualantoko.diskonslw');
-    Route::get('/print-penjualantoko-bersihslw', [Setoran_tokoslawiController::class, 'printPenjualanBersihslw'])->name('print.penjualantoko.bersihslw');
-    Route::get('penjualanprodukslw/detail/{id}', [Setoran_tokoslawiController::class, 'show'])->name('penjualanprodukslw.detail');
-    Route::get('penjualanprodukslw/detaildepositkeluar/{id}', [Setoran_tokoslawiController::class, 'show2'])->name('penjualanprodukslw.detaildepositkeluar');
-    Route::get('pemesananprodukslw/detailpemesanan/{id}', [Setoran_tokoslawiController::class, 'show1'])->name('pemesananprodukslw.detailpemesanan');
-
-    Route::resource('laporan_setorantokoslawi', \App\Http\Controllers\Toko_slawi\Laporan_setoranpenjualanslwController::class);
-    Route::get('printReportsetoranslw', [Laporan_setoranpenjualanslwController::class, 'printReportsetoranslw'])->name('laporan_setoranpenjualan.print');
-
-    Route::resource('inquery_depositslawi', \App\Http\Controllers\Toko_slawi\Inquery_depositslawiController::class);
-
-    Route::resource('laporan_depositslawi', \App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class);
-    Route::get('indexrinci', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'indexrinci']);
-    Route::get('indexsaldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'indexsaldo']);
-    Route::get('saldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'saldo']);
-    Route::get('printReportdeposit', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportdeposit']);
-    Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportdepositrinci']);
-    Route::get('printReportsaldo', [\App\Http\Controllers\Toko_slawi\Laporan_depositslawiController::class, 'printReportsaldo']);
-    
-    Route::resource('inquery_setorantunaislawi', \App\Http\Controllers\Toko_slawi\Inquery_setorantunaislawiController::class);
-    Route::get('/toko_slawi/inquery_setorantunaislawi/{id}/print', [Inquery_setorantunaislawiController::class, 'print'])->name('inquery_setorantunaislawi.print');
-
-    Route::resource('laporan_setorantunaislawi', \App\Http\Controllers\Toko_slawi\Laporan_setorantunaislawiController::class);
-
-    Route::resource('laporan_returslawi', \App\Http\Controllers\Toko_slawi\Laporan_returslawiController::class);
-    Route::get('printReportreturslawi', [\App\Http\Controllers\Toko_slawi\Laporan_returslawiController::class, 'printReportreturslawi']);
-
-    Route::resource('laporan_historislawi', \App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class);
-    Route::get('barangMasukpesananslawi', [Laporan_historislawiController::class, 'barangMasukpesananslawi'])->name('barangMasukpesananslawi');
-    Route::get('barangMasuksemuaslawi', [Laporan_historislawiController::class, 'barangMasuksemuaslawi'])->name('barangMasuksemuaslawi');
-    Route::get('printLaporanBmslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmslawi']);
-    Route::get('printLaporanBmpesananslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmpesananslawi']);
-    Route::get('printLaporanBmsemuaslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBmsemuaslawi']);
-    Route::get('printExcelBmslawi', [Laporan_historislawiController::class, 'exportExcelslawi'])->name('printExcelBmslawi');
-    Route::get('printExcelBmpesananslawi', [Laporan_historislawiController::class, 'exportExcelBMpesananslawi'])->name('printExcelBmpesananslawi');
-    Route::get('printExcelBmsemuaslawi', [Laporan_historislawiController::class, 'exportExcelBMsemuaslawi'])->name('printExcelBmsemuaslawi');
-    
-    Route::get('barangKeluarslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangKeluarslawi'])->name('barangKeluarslawi');
-    Route::get('barangKeluarRincislawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangKeluarRincislawi'])->name('barangKeluarRincislawi');
-    Route::get('printLaporanBKslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBKslawi']);
-    Route::get('printLaporanBKrincislawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBKrincislawi']);
-    Route::get('printExcelBkslawi', [Laporan_historislawiController::class, 'exportExcelBK'])->name('printExcelBkslawi');
-    
-    // Route::get('barangReturbanjaran', [\App\Http\Controllers\Toko_slawi\Laporan_historibanjaranController::class, 'barangReturbanjaran']);
-    Route::get('barangReturslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangReturslawi'])->name('barangReturslawi');
-    Route::get('/print-report', [Laporan_historislawiController::class, 'printReport'])->name('print.report');
-    Route::get('printLaporanBRslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBRslawi']);
-    Route::get('printExcelBrslawi', [Laporan_historislawiController::class, 'exportExcelBR'])->name('printExcelBrslawi');
-    Route::get('/get-produk-by-klasifikasi/{id}', [Laporan_historislawiController::class, 'getByKlasifikasi'])->name('getProdukByKlasifikasi');
-
-    Route::get('barangOperslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangOperslawi'])->name('barangOperslawi');
-    Route::get('barangOperanslawiMasuk', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'barangOperanslawiMasuk'])->name('barangOperanslawiMasuk');
-    Route::get('printLaporanBOslawi', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBOslawi']);
-    Route::get('printLaporanBOslawiMasuk', [\App\Http\Controllers\Toko_slawi\Laporan_historislawiController::class, 'printLaporanBOslawiMasuk']);
-
 });
 
 Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
@@ -1763,7 +1774,7 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
     Route::post('/toko_cilacap/inquery_penjualanprodukcilacap/{id}/update', [Inquery_penjualanprodukcilacapController::class, 'update'])->name('inquery_penjualanprodukcilacap.update');
     Route::get('metodebayarcilacap/metode/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_penjualanprodukcilacapController::class, 'metode']);
     Route::delete('/toko_cilacap/inquery_penjualanproduk/{id}', [Inquery_penjualanprodukcilacapController::class, 'destroy'])
-    ->name('toko_cilacap.inquery_penjualanproduk.destroy');
+        ->name('toko_cilacap.inquery_penjualanproduk.destroy');
 
     Route::resource('laporan_penjualanproduk', \App\Http\Controllers\Toko_cilacap\Laporan_penjualanprodukController::class);
     Route::get('printReport', [\App\Http\Controllers\Toko_cilacap\Laporan_penjualanprodukController::class, 'printReport']);
@@ -1780,7 +1791,7 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
 
 
     Route::resource('inquery_permintaanproduk', \App\Http\Controllers\Toko_cilacap\Inquery_permintaanprodukController::class);
-  
+
     Route::resource('inquery_pelunasancilacap', \App\Http\Controllers\Toko_cilacap\Inquery_pelunasancilacapController::class);
 
 
@@ -1794,7 +1805,7 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
 
     Route::resource('metode_pembayaran', \App\Http\Controllers\Toko_cilacap\Metode_pembayaranController::class);
 
- 
+
     Route::resource('stok_tokocilacap', \App\Http\Controllers\Toko_cilacap\Stok_tokocilacapController::class);
     Route::delete('/toko_cilacap/stok_tokocilacap/deleteAll', [Stok_tokocilacapController::class, 'deleteAll'])->name('stok_tokocilacap.deleteAll');
     Route::post('toko_cilacap/stok_tokocilacap/import', [Stok_tokocilacapController::class, 'import'])->name('stok_tokocilacap.import');
@@ -1818,7 +1829,7 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
 
 
     Route::resource('retur_tokocilacap', \App\Http\Controllers\Toko_cilacap\Retur_tokocilacapController::class);
-  
+
     Route::resource('inquery_returcilacap', \App\Http\Controllers\Toko_cilacap\Inquery_returcilacapController::class);
     Route::get('inquery_returcilacap/unpost_retur/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_returcilacapController::class, 'unpost_retur']);
     Route::get('inquery_returcilacap/posting_retur/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_returcilacapController::class, 'posting_retur']);
@@ -1880,7 +1891,7 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
     Route::get('printReportdeposit', [\App\Http\Controllers\Toko_cilacap\Laporan_depositcilacapController::class, 'printReportdeposit']);
     Route::get('printReportdepositrinci', [\App\Http\Controllers\Toko_cilacap\Laporan_depositcilacapController::class, 'printReportdepositrinci']);
     Route::get('printReportsaldo', [\App\Http\Controllers\Toko_cilacap\Laporan_depositcilacapController::class, 'printReportsaldo']);
-    
+
     Route::resource('inquery_setorantunaicilacap', \App\Http\Controllers\Toko_cilacap\Inquery_setorantunaicilacapController::class);
     Route::get('/toko_cilacap/inquery_setorantunaicilacap/{id}/print', [Inquery_setorantunaicilacapController::class, 'print'])->name('inquery_setorantunaicilacap.print');
 
@@ -1898,13 +1909,13 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
     Route::get('printExcelBmcilacap', [Laporan_historicilacapController::class, 'exportExcel'])->name('printExcelBmcilacap');
     Route::get('printExcelBmpesanancilacap', [Laporan_historicilacapController::class, 'exportExcelBMpesanan'])->name('printExcelBmpesanancilacap');
     Route::get('printExcelBmsemuacilacap', [Laporan_historicilacapController::class, 'exportExcelBMsemua'])->name('printExcelBmsemuacilacap');
-    
+
     Route::get('barangKeluarcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'barangKeluarcilacap'])->name('barangKeluarcilacap');
     Route::get('barangKeluarRincicilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'barangKeluarRincicilacap'])->name('barangKeluarRincicilacap');
     Route::get('printLaporanBKcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBKcilacap']);
     Route::get('printLaporanBKrincicilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBKrincicilacap']);
     Route::get('printExcelBkcilacap', [Laporan_historicilacapController::class, 'exportExcelBK'])->name('printExcelBkcilacap');
-    
+
     Route::get('barangReturcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'barangReturcilacap'])->name('barangReturcilacap');
     Route::get('/print-report', [Laporan_historicilacapController::class, 'printReport'])->name('print.report');
     Route::get('printLaporanBRcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBRcilacap']);
@@ -1915,10 +1926,4 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
     Route::get('barangOperancilacapMasuk', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'barangOperacilacapMasuk'])->name('barangOperancilacapMasuk');
     Route::get('printLaporanBOcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBOcilacap']);
     Route::get('printLaporanBOcilacapMasuk', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBOcilacapMasuk']);
-
 });
-
-
-
-
-
