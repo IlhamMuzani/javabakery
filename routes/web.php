@@ -1268,7 +1268,6 @@ Route::middleware('toko_slawi')->prefix('toko_slawi')->group(function () {
     Route::delete('inquery_pemesananslawi/deletedetail/{id}', [\App\Http\Controllers\Toko_slawi\Inquery_pelunasanslawiController::class, 'deletedetail']);
 });
 
-
 Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('/', [\App\Http\Controllers\Toko_pemalang\DashboardController::class, 'index']);
 
@@ -1490,6 +1489,11 @@ Route::middleware('toko_pemalang')->prefix('toko_pemalang')->group(function () {
     Route::get('barangOperanpemalangMasuk', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'barangOperapemalangMasuk'])->name('barangOperanpemalangMasuk');
     Route::get('printLaporanBOpemalang', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBOpemalang']);
     Route::get('printLaporanBOpemalangMasuk', [\App\Http\Controllers\Toko_pemalang\Laporan_historipemalangController::class, 'printLaporanBOpemalangMasuk']);
+
+    Route::get('inquery_pelunasanpemalang/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_pelunasanpemalangController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasanpemalang/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_pelunasanpemalangController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasanpemalang/deletedetail/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_pelunasanpemalangController::class, 'deletedetail']);
+    Route::delete('inquery_pemesananpemalang/deletedetail/{id}', [\App\Http\Controllers\Toko_pemalang\Inquery_pemesananprodukController::class, 'deletedetail']);
 });
 
 
@@ -1710,6 +1714,11 @@ Route::middleware('toko_bumiayu')->prefix('toko_bumiayu')->group(function () {
     Route::get('barangOperanbumiayuMasuk', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'barangOperanbumiayuMasuk'])->name('barangOperanbumiayuMasuk');
     Route::get('printLaporanBObumiayu', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBObumiayu']);
     Route::get('printLaporanBObumiayuMasuk', [\App\Http\Controllers\Toko_bumiayu\Laporan_historibumiayuController::class, 'printLaporanBObumiayuMasuk']);
+
+    Route::get('inquery_pelunasanbumiayu/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_pelunasanbumiayuController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasanbumiayu/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_pelunasanbumiayuController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasanbumiayu/deletedetail/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_pelunasanbumiayuController::class, 'deletedetail']);
+    Route::delete('inquery_pemesananbumiayu/deletedetail/{id}', [\App\Http\Controllers\Toko_bumiayu\Inquery_pemesananprodukController::class, 'deletedetail']);
 });
 
 Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
@@ -1926,4 +1935,9 @@ Route::middleware('toko_cilacap')->prefix('toko_cilacap')->group(function () {
     Route::get('barangOperancilacapMasuk', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'barangOperacilacapMasuk'])->name('barangOperancilacapMasuk');
     Route::get('printLaporanBOcilacap', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBOcilacap']);
     Route::get('printLaporanBOcilacapMasuk', [\App\Http\Controllers\Toko_cilacap\Laporan_historicilacapController::class, 'printLaporanBOcilacapMasuk']);
+
+    Route::get('inquery_pelunasancilacap/unpost_penjualanproduk/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_pelunasancilacapController::class, 'unpost_penjualanproduk']);
+    Route::get('inquery_pelunasancilacap/posting_penjualanproduk/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_pelunasancilacapController::class, 'posting_penjualanproduk']);
+    Route::delete('inquery_pelunasancilacap/deletedetail/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_pelunasancilacapController::class, 'deletedetail']);
+    Route::delete('inquery_pemesanancilacap/deletedetail/{id}', [\App\Http\Controllers\Toko_cilacap\Inquery_pemesananprodukController::class, 'deletedetail']);
 });

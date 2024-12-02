@@ -76,7 +76,7 @@
                 </div>
             @endif
 
-            <form action="{{ url('toko_banjaran/inquery_pelunasanbanjaran/' . $inquery->id) }}" method="POST"
+            <form action="{{ url('toko_banjaran/pelunasan_pemesanan/' . $inquery->id) }}" method="POST"
                 enctype="multipart/form-data" autocomplete="off">
                 @csrf
                 @method('put')
@@ -86,10 +86,6 @@
                     <div class="card-body">
                         <label style="font-size:14px" class="form-label" for="kode_dppemesanan">Kode Pemesanan</label>
                         <div class="form-group d-flex">
-                            <input class="form-control" hidden id="penjualanproduk_id" name="penjualanproduk_id"
-                                type="text" placeholder=""
-                                value="{{ old('penjualanproduk_id', $inquery->penjualanproduk_id) }}" readonly
-                                style="margin-right: 10px; font-size:14px" />
                             <input class="form-control" hidden id="dppemesanan_id" name="dppemesanan_id" type="text"
                                 placeholder="" value="{{ old('dppemesanan_id', $inquery->dppemesanan_id) }}" readonly
                                 style="margin-right: 10px; font-size:14px" />
@@ -205,9 +201,9 @@
                                     <thead>
                                         <tr>
                                             <th style="font-size:14px" class="text-center">No</th>
-                                            {{-- <th hidden style="font-size:14px">produk Id</th>
-                                            <th hidden style="font-size:14px">Kode Produk</th> --}}
-                                            {{-- <th style="font-size:14px">Diskon</th> --}}
+                                            <th style="font-size:14px">produk Id</th>
+                                            <th style="font-size:14px">Kode Produk</th>
+                                            <th style="font-size:14px">Diskon</th>
                                             <th style="font-size:14px">Kode Lama</th>
                                             <th style="font-size:14px">Nama Produk</th>
                                             <th style="font-size:14px">Harga</th>
@@ -230,42 +226,42 @@
                                                     </div>
 
                                                 </td>
-                                                <td hidden>
+                                                <td>
                                                     <div class="form-group">
                                                         <input style="font-size:14px" type="text" readonly
                                                             class="form-control" id="produk_id-{{ $loop->index }}"
                                                             name="produk_id[]" value="{{ $detail['produk_id'] }}">
                                                     </div>
                                                 </td>
-                                                <td hidden>
+                                                <td>
                                                     <div class="form-group">
                                                         <input style="font-size:14px" type="text" readonly
                                                             class="form-control" id="kode_produk-{{ $loop->index }}"
                                                             name="kode_produk[]" value="{{ $detail['kode_produk'] }}">
                                                     </div>
                                                 </td>
-                                                <td hidden>
+                                                <td>
                                                     <div class="form-group">
                                                         <input style="font-size:14px" type="text" readonly
                                                             class="form-control diskon" id="diskon-{{ $loop->index }}"
                                                             name="diskon[]" value="{{ $detail['diskon'] }}">
                                                     </div>
                                                 </td>
-                                                <td onclick="barang({{ $loop->index }})">
+                                                <td>
                                                     <div class="form-group">
                                                         <input style="font-size:14px" type="text" readonly
                                                             class="form-control" id="kode_lama-{{ $loop->index }}"
                                                             name="kode_lama[]" value="{{ $detail['kode_lama'] }}">
                                                     </div>
                                                 </td>
-                                                <td onclick="barang({{ $loop->index }})">
+                                                <td>
                                                     <div class="form-group">
                                                         <input style="font-size:14px" type="text" readonly
                                                             class="form-control" id="nama_produk-{{ $loop->index }}"
                                                             name="nama_produk[]" value="{{ $detail['nama_produk'] }}">
                                                     </div>
                                                 </td>
-                                                <td onclick="barang({{ $loop->index }})">
+                                                <td>
                                                     <div class="form-group">
                                                         <input readonly style="font-size:14px" type="number"
                                                             class="form-control harga" id="harga-{{ $loop->index }}"
@@ -279,7 +275,7 @@
                                                             name="jumlah[]" value="{{ $detail['jumlah'] }}">
                                                     </div>
                                                 </td>
-                                                <td onclick="barang({{ $loop->index }})">
+                                                <td>
                                                     <div class="form-group">
                                                         <input readonly style="font-size:14px" type="number"
                                                             class="form-control total" id="total-{{ $loop->index }}"
@@ -304,12 +300,12 @@
                             </div>
                         </div>
 
-                        <div hidden class="form-group">
+                        {{-- <div class="form-group">
                             <label style="font-size:14px" class="mt-0" for="nopol">Grand Total</label>
                             <input style="font-size:14px" type="text" class="form-control text-right"
                                 id="grand_total" name="grand_total" readonly placeholder=""
                                 value="{{ old('grand_total') }}">
-                        </div>
+                        </div> --}}
                         {{-- pembayaran --}}
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -363,11 +359,11 @@
                                     <div class="form-group" style="margin-top:10px; margin-left:20px; margin-right:20px;">
                                         <label sty for="metode_id">Jenis Pembayaran</label>
                                         <select class="form-control" name="metode_id" style="width: 100%;"
-                                            id="nama_metode">
+                                            id="nama_metode" onchange="getData1()">
                                             <option value="">- Pilih -</option>
                                             @foreach ($metodes as $metode)
                                                 <option value="{{ $metode->id }}" data-fee="{{ $metode->fee }}"
-                                                    {{ old('metode_id', $inquery->penjualanproduk->metode_id) == $metode->id ? 'selected' : '' }}>
+                                                    {{ old('metode_id') == $metode->id ? 'selected' : '' }}>
                                                     {{ $metode->nama_metode }}
                                                 </option>
                                             @endforeach
@@ -394,17 +390,17 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" class="form-control" id="total_fee"
-                                                    name="total_fee" placeholder="" value="{{ old('total_fee') }}"
-                                                    readonly>
+                                                    name="total_fee" placeholder=""
+                                                    value="{{ old('total_fee', 'Rp0') }}" readonly>
                                             </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col-md-4">
-                                                <label for="keterangan">Keterangan</label>
+                                                <label for="total">Keterangan</label>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="text" class="form-control" id="keterangan"
-                                                    name="keterangan" placeholder="" value="{{ old('keterangan') }}">
+                                                <input type="text" class="form-control" id="total" name="total"
+                                                    placeholder="" value="{{ old('total') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -418,16 +414,17 @@
                                         <div class="row">
                                             <div class="col mb-3 ml-auto d-flex align-items-center">
                                                 <label for="pelunasan" class="mr-2 label-width">Bayar</label>
-                                                <input type="text" class="form-control large-font input-width "
+                                                <input type="text" class="form-control large-font input-width"
                                                     id="pelunasan" name="pelunasan"
-                                                    value="{{ old('pelunasan', $inquery->pelunasan) }}">
+                                                    value="{{ old('pelunasan') }}">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col mb-3 ml-auto d-flex align-items-center">
                                                 <label for="kembali" class="mr-2 label-width">Kembali</label>
                                                 <input type="text" class="form-control large-font input-width"
-                                                    id="kembali" name="kembali" value="{{ old('kembali') }}" readonly>
+                                                    id="kembali" name="kembali" value="{{ old('kembali', 'Rp') }}"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -526,9 +523,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="m-2">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
-                        </div>
                         <table id="tables" class="table table-bordered table-striped" style="font-size: 12px;">
                             <thead>
                                 <tr>
@@ -558,8 +552,7 @@
                                         data-member="{{ $tokobanjaran ? $tokobanjaran->member_harga_bnjr : '' }}"
                                         data-diskonmember="{{ $tokobanjaran ? $tokobanjaran->member_diskon_bnjr : '' }}"
                                         data-nonmember="{{ $tokobanjaran ? $tokobanjaran->non_harga_bnjr : '' }}"
-                                        data-diskonnonmember="{{ $tokobanjaran ? $tokobanjaran->non_diskon_bnjr : '' }}"
-                                        onclick="getBarang({{ $loop->index }})">
+                                        data-diskonnonmember="{{ $tokobanjaran ? $tokobanjaran->non_diskon_bnjr : '' }}">
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $item->kode_produk }}</td>
                                         <td>{{ $item->kode_lama }}</td>
@@ -609,13 +602,10 @@
             currentRow.find(".total").val(total);
 
             updateGrandTotal()
-            updateFee(); // Setelah itu hitung fee berdasarkan nilai sub_total
 
         });
     </script>
     </script>
-
-
     <script>
         function updateGrandTotal() {
             var grandTotal = 0;
@@ -626,23 +616,16 @@
                 grandTotal += nominalValue;
             });
 
-            // Ambil nilai total_fee
-            var totalFee = parseFloat($('#total_fee').val().replace(/\./g, '').replace(',', '.')) || 0;
-
-            // Tambahkan grand_total dengan total_fee
-            var subTotal = grandTotal + totalFee;
-
             // Update sub_total field
-            $('#grand_total').val(formatRupiahsss(grandTotal));
-            $('#sub_total').val(formatRupiahsss(subTotal));
+            $('#sub_total').val(formatRupiahsss(grandTotal));
 
             // Update kekurangan_pemesanan by subtracting dp from sub_total
-            updateKekuranganPemesanan(subTotal);
+            updateKekuranganPemesanan(grandTotal);
         }
 
-        function updateKekuranganPemesanan(subTotal) {
+        function updateKekuranganPemesanan(grandTotal) {
             var dpValue = parseFloat($('#dp_pemesanan').val().replace(/\./g, '').replace(',', '.')) || 0;
-            var kekurangan = subTotal - dpValue;
+            var kekurangan = grandTotal - dpValue;
 
             // Update kekurangan_pemesanan field
             $('#kekurangan_pemesanan').val(formatRupiahsss(kekurangan));
@@ -659,39 +642,6 @@
             $('#kembali').val(formatRupiahsss(kembalian));
         }
 
-        function updateFee() {
-            var selectedOption = $('#nama_metode option:selected');
-            var metodeValue = selectedOption.val();
-            var subTotal = parseFloat($('#sub_total').val().replace(/\./g, '').replace(',', '.')) || 0;
-            var fee_persen = 0;
-            var fee = 0;
-
-            if (metodeValue === "1") {
-                // Jika metode pembayaran adalah 1, fee 1%
-                fee_persen = 1;
-                fee = (1 / 100) * subTotal;
-            } else if (metodeValue === "2") {
-                // Jika metode pembayaran adalah 2, fee 20%
-                fee_persen = 20;
-                fee = (20 / 100) * subTotal;
-            } else if (metodeValue === "3" || metodeValue === null || metodeValue === "") {
-                // Jika metode pembayaran adalah 3 atau null atau kosong, fee 0%
-                fee_persen = 0;
-                fee = 0;
-            } else {
-                // Ambil fee default dari atribut data-fee (jika ada)
-                var feePercent = parseFloat(selectedOption.data('fee')) || 0;
-                fee = (feePercent / 100) * subTotal;
-            }
-
-            // Update total_fee field
-            $('#fee').val(formatRupiahsss(fee_persen));
-            $('#total_fee').val(formatRupiahsss(fee));
-
-            // Recalculate grand_total and sub_total when fee changes
-            updateGrandTotal();
-        }
-
         function formatRupiahsss(number) {
             var formatted = new Intl.NumberFormat('id-ID', {
                 minimumFractionDigits: 0,
@@ -705,119 +655,12 @@
             updateGrandTotal();
         });
 
-        // Recalculate fee on metode selection change
-        $('#nama_metode').on('change', function() {
-            updateFee();
-        });
-
-        // Initialize values on page load
+        // Initialize grand total on page load
         $(document).ready(function() {
-            updateGrandTotal(); // Hitung grand total terlebih dahulu
-            updateFee(); // Setelah itu hitung fee berdasarkan nilai sub_total
+            updateGrandTotal();
         });
     </script>
 
-
-    {{-- sudah benar namun metode id belum auto 
-    <script>
-        function updateGrandTotal() {
-            var grandTotal = 0;
-
-            // Loop through all elements with name "total[]"
-            $('input[name^="total"]').each(function() {
-                var nominalValue = parseFloat($(this).val().replace(/\./g, '').replace(',', '.')) || 0;
-                grandTotal += nominalValue;
-            });
-
-            // Ambil nilai total_fee
-            var totalFee = parseFloat($('#total_fee').val().replace(/\./g, '').replace(',', '.')) || 0;
-
-            // Tambahkan grand_total dengan total_fee
-            var subTotal = grandTotal + totalFee;
-
-            // Update sub_total field
-            $('#grand_total').val(formatRupiahsss(grandTotal));
-            $('#sub_total').val(formatRupiahsss(subTotal));
-
-            // Update kekurangan_pemesanan by subtracting dp from sub_total
-            updateKekuranganPemesanan(subTotal);
-        }
-
-        function updateKekuranganPemesanan(subTotal) {
-            var dpValue = parseFloat($('#dp_pemesanan').val().replace(/\./g, '').replace(',', '.')) || 0;
-            var kekurangan = subTotal - dpValue;
-
-            // Update kekurangan_pemesanan field
-            $('#kekurangan_pemesanan').val(formatRupiahsss(kekurangan));
-
-            // Update kembalian when bayarpelunasan input changes
-            updateKembalian(kekurangan);
-        }
-
-        function updateKembalian(kekurangan) {
-            var bayarValue = parseFloat($('#pelunasan').val().replace(/\./g, '').replace(',', '.')) || 0;
-            var kembalian = bayarValue - kekurangan;
-
-            // Update kembalian field
-            $('#kembali').val(formatRupiahsss(kembalian));
-        }
-
-        function updateFee() {
-            var selectedOption = $('#nama_metode option:selected');
-            var metodeValue = selectedOption.val();
-            var subTotal = parseFloat($('#sub_total').val().replace(/\./g, '').replace(',', '.')) || 0;
-            var fee_persen = 0;
-            var fee = 0;
-
-            if (metodeValue === "1") {
-                // Jika metode pembayaran adalah 1, fee 1%
-                fee_persen = 1;
-                fee = (1 / 100) * subTotal;
-            } else if (metodeValue === "2") {
-                // Jika metode pembayaran adalah 2, fee 20%
-                fee_persen = 20;
-                fee = (20 / 100) * subTotal;
-            } else if (metodeValue === "3" || metodeValue === null || metodeValue === "") {
-                // Jika metode pembayaran adalah 3 atau null atau kosong, fee 0%
-                fee_persen = 0;
-                fee = 0;
-            } else {
-                // Ambil fee default dari atribut data-fee (jika ada)
-                var feePercent = parseFloat(selectedOption.data('fee')) || 0;
-                fee = (feePercent / 100) * subTotal;
-            }
-
-            // Update total_fee field
-            $('#fee').val(formatRupiahsss(fee_persen));
-            $('#total_fee').val(formatRupiahsss(fee));
-
-            // Recalculate grand_total and sub_total when fee changes
-            updateGrandTotal();
-        }
-
-        function formatRupiahsss(number) {
-            var formatted = new Intl.NumberFormat('id-ID', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(number);
-            return formatted;
-        }
-
-        // Recalculate on any input change
-        $('body').on('input', 'input[name^="total"], #dp_pemesanan, #pelunasan', function() {
-            updateGrandTotal();
-        });
-
-        // Recalculate fee on metode selection change
-        $('#nama_metode').on('change', function() {
-            updateFee();
-        });
-
-        // Initialize values on page load
-        $(document).ready(function() {
-            updateGrandTotal();
-        });
-    </script> --}}
 
 
     <script>
@@ -944,7 +787,7 @@
 
             if (detailId) {
                 $.ajax({
-                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/deletedetail/') }}/" + detailId,
+                    url: "{{ url('admin/inquery_pengeluarankaskecil/deletedetailpengeluaran/') }}/" + detailId,
                     type: "POST",
                     data: {
                         _method: 'DELETE',
@@ -958,8 +801,7 @@
                     }
                 });
             }
-            updateGrandTotal(); // Hitung grand total terlebih dahulu
-            updateFee(); // Setelah itu hitung fee berdasarkan nilai sub_total
+            updateGrandTotal()
             updateUrutan();
         }
 
@@ -990,7 +832,7 @@
             item_pembelian += '<td style="width: 70px; font-size:14px" class="text-center" id="urutan">' + key + '</td>';
 
             // produk_id 
-            item_pembelian += '<td hidden>';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian += '<input readonly type="text" class="form-control" style="font-size:14px" id="produk_id-' +
                 key +
@@ -999,7 +841,7 @@
             item_pembelian += '</td>';
 
             // kode_produk 
-            item_pembelian += '<td hidden>';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian += '<input readonly type="text" class="form-control" style="font-size:14px" id="kode_produk-' +
                 key +
@@ -1008,7 +850,7 @@
             item_pembelian += '</td>';
 
             // diskon 
-            item_pembelian += '<td hidden>';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian +=
                 '<input readonly type="number" class="form-control diskon" style="font-size:14px" id="diskon-' +
@@ -1018,8 +860,7 @@
             item_pembelian += '</td>';
 
             // kode_lama 
-            item_pembelian += '<td onclick="barang(' + key +
-                ')">';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian += '<input readonly type="text" class="form-control" style="font-size:14px" id="kode_lama-' +
                 key +
@@ -1028,8 +869,7 @@
             item_pembelian += '</td>';
 
             // nama_produk 
-            item_pembelian += '<td onclick="barang(' + key +
-                ')">';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian += '<input type="text" class="form-control" readonly style="font-size:14px" id="nama_produk-' +
                 key +
@@ -1038,8 +878,7 @@
             item_pembelian += '</td>';
 
             // harga 
-            item_pembelian += '<td onclick="barang(' + key +
-                ')">';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian +=
                 '<input readonly type="number" class="form-control harga" readonly style="font-size:14px" id="harga-' +
@@ -1058,8 +897,7 @@
             item_pembelian += '</td>';
 
             // total 
-            item_pembelian += '<td onclick="barang(' + key +
-                ')">';
+            item_pembelian += '<td>';
             item_pembelian += '<div class="form-group">'
             item_pembelian += '<input readonly type="number" class="form-control total" style="font-size:14px" id="total-' +
                 key +
@@ -1106,38 +944,6 @@
                 }
             });
         });
-    </script>
-
-
-    <script>
-        // filter rute 
-        function filterMemo() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("tables");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                var displayRow = false;
-
-                // Loop through columns (td 1, 2, and 3)
-                for (j = 1; j <= 3; j++) {
-                    td = tr[i].getElementsByTagName("td")[j];
-                    if (td) {
-                        txtValue = td.textContent || td.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            displayRow = true;
-                            break; // Break the loop if a match is found in any column
-                        }
-                    }
-                }
-
-                // Set the display style based on whether a match is found in any column
-                tr[i].style.display = displayRow ? "" : "none";
-            }
-        }
-        document.getElementById("searchInput").addEventListener("input", filterMemo);
     </script>
 
 @endsection

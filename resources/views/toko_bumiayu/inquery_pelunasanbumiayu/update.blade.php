@@ -76,7 +76,7 @@
                 </div>
             @endif
 
-            <form action="{{ url('toko_banjaran/inquery_pelunasanbanjaran/' . $inquery->id) }}" method="POST"
+            <form action="{{ url('toko_bumiayu/inquery_pelunasanbumiayu/' . $inquery->id) }}" method="POST"
                 enctype="multipart/form-data" autocomplete="off">
                 @csrf
                 @method('put')
@@ -228,7 +228,6 @@
                                                         <input type="text" class="form-control" name="detail_ids[]"
                                                             value="{{ $detail['id'] }}">
                                                     </div>
-
                                                 </td>
                                                 <td hidden>
                                                     <div class="form-group">
@@ -546,19 +545,19 @@
                             <tbody>
                                 @foreach ($produks as $item)
                                     @php
-                                        $tokobanjaran = $item->tokobanjaran->first();
-                                        $stokpesanan_tokobanjaran = $item->stokpesanan_tokobanjaran
-                                            ? $item->stokpesanan_tokobanjaran->jumlah
+                                        $tokobumiayu = $item->tokobumiayu->first();
+                                        $stokpesanan_tokobumiayu = $item->stokpesanan_tokobumiayu
+                                            ? $item->stokpesanan_tokobumiayu->jumlah
                                             : 0; // Jika stok ada, tampilkan, jika tidak tampilkan 0
 
                                     @endphp
                                     <tr data-id="{{ $item->id }}" data-kode="{{ $item->kode_produk }}"
                                         data-lama="{{ $item->kode_lama }}" data-catatan="{{ $item->catatanproduk }}"
                                         data-nama="{{ $item->nama_produk }}"
-                                        data-member="{{ $tokobanjaran ? $tokobanjaran->member_harga_bnjr : '' }}"
-                                        data-diskonmember="{{ $tokobanjaran ? $tokobanjaran->member_diskon_bnjr : '' }}"
-                                        data-nonmember="{{ $tokobanjaran ? $tokobanjaran->non_harga_bnjr : '' }}"
-                                        data-diskonnonmember="{{ $tokobanjaran ? $tokobanjaran->non_diskon_bnjr : '' }}"
+                                        data-member="{{ $tokobumiayu ? $tokobumiayu->member_harga_bnjr : '' }}"
+                                        data-diskonmember="{{ $tokobumiayu ? $tokobumiayu->member_diskon_bnjr : '' }}"
+                                        data-nonmember="{{ $tokobumiayu ? $tokobumiayu->non_harga_bnjr : '' }}"
+                                        data-diskonnonmember="{{ $tokobumiayu ? $tokobumiayu->non_diskon_bnjr : '' }}"
                                         onclick="getBarang({{ $loop->index }})">
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $item->kode_produk }}</td>
@@ -566,19 +565,19 @@
                                         <td>{{ $item->nama_produk }}</td>
                                         <td>
                                             <span
-                                                class="member_harga_bnjr">{{ $tokobanjaran ? $tokobanjaran->member_harga_bnjr : '' }}</span>
+                                                class="member_harga_bnjr">{{ $tokobumiayu ? $tokobumiayu->member_harga_bnjr : '' }}</span>
                                         </td>
                                         <td>
                                             <span
-                                                class="member_diskon_bnjr">{{ $tokobanjaran ? $tokobanjaran->member_diskon_bnjr : '' }}</span>
+                                                class="member_diskon_bnjr">{{ $tokobumiayu ? $tokobumiayu->member_diskon_bnjr : '' }}</span>
                                         </td>
                                         <td>
                                             <span
-                                                class="non_harga_bnjr">{{ $tokobanjaran ? $tokobanjaran->non_harga_bnjr : '' }}</span>
+                                                class="non_harga_bnjr">{{ $tokobumiayu ? $tokobumiayu->non_harga_bnjr : '' }}</span>
                                         </td>
                                         <td>
                                             <span
-                                                class="non_diskon_bnjr">{{ $tokobanjaran ? $tokobanjaran->non_diskon_bnjr : '' }}</span>
+                                                class="non_diskon_bnjr">{{ $tokobumiayu ? $tokobumiayu->non_diskon_bnjr : '' }}</span>
                                         </td>
 
                                         <td class="text-center">
@@ -875,10 +874,10 @@
 
             if (selectedValue === 'penjualan') {
                 window.location.href =
-                    "{{ route('toko_banjaran.penjualan_produk.create') }}"; // Ganti dengan route yang sesuai untuk Penjualan
+                    "{{ route('toko_bumiayu.penjualan_produk.create') }}"; // Ganti dengan route yang sesuai untuk Penjualan
             } else if (selectedValue === 'pelunasan') {
                 window.location.href =
-                    "{{ route('toko_banjaran.penjualan_produk.pelunasan') }}"; // Ganti dengan route yang sesuai untuk Pelunasan
+                    "{{ route('toko_bumiayu.penjualan_produk.pelunasan') }}"; // Ganti dengan route yang sesuai untuk Pelunasan
             }
         });
     </script>
@@ -944,7 +943,7 @@
 
             if (detailId) {
                 $.ajax({
-                    url: "{{ url('toko_banjaran/inquery_pelunasanbanjaran/deletedetail/') }}/" + detailId,
+                    url: "{{ url('toko_bumiayu/inquery_pelunasanbumiayu/deletedetail/') }}/" + detailId,
                     type: "POST",
                     data: {
                         _method: 'DELETE',

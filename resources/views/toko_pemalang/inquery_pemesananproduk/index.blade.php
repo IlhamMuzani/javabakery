@@ -2,7 +2,7 @@
 
 {{-- test --}}
 
-@section('title', 'Produks')
+@section('title', 'Iquery Pemesanan Produk')
 
 @section('content')
     <div id="loadingSpinner" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
@@ -61,18 +61,20 @@
                     <h3 class="card-title">Pemesanan Produk</h3>
                 </div>
                 <!-- /.card-header -->
-                 
+
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <select class="custom-select form-control" id="status" name="status">
-                                <option value="">- Semua Status -</option>
-                                <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>Posting</option>
-                                <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost</option>
-                            </select>
-                            <label for="status">(Pilih Status)</label>
-                        </div>
+                            <div class="col-md-3 mb-3">
+                                <select class="custom-select form-control" id="status" name="status">
+                                    <option value="">- Semua Status -</option>
+                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>
+                                        Posting</option>
+                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost
+                                    </option>
+                                </select>
+                                <label for="status">(Pilih Status)</label>
+                            </div>
                             <div class="col-md-3 mb-3">
                                 <input class="form-control" id="tanggal_pemesanan" name="tanggal_pemesanan" type="date"
                                     value="{{ Request::get('tanggal_pemesanan') }}" max="{{ date('Y-m-d') }}" />
@@ -87,12 +89,12 @@
                                 <button type="button" class="btn btn-outline-primary btn-block" onclick="cari()">
                                     <i class="fas fa-search"></i> Cari
                                 </button>
-                                
+
                             </div>
                         </div>
                     </form>
 
-                   
+
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 13px">
                         <thead class="">
                             <tr>
@@ -102,7 +104,7 @@
                                 <th>Tanggal Pemesanan</th>
                                 <th>Nama Pelanggan</th>
                                 <th>Produk</th>
-                          
+
                                 <th>Total</th>
                                 <th class="text-center" width="20">Opsi</th>
                             </tr>
@@ -110,7 +112,7 @@
                         <tbody>
                             @foreach ($inquery as $item)
                                 <tr class="dropdown"{{ $item->id }}>
-                                   
+
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
                                         {{ $item->kode_pemesanan }}
@@ -118,7 +120,7 @@
                                     <td>
                                         {{ \Carbon\Carbon::parse($item->tanggal_pemesanan)->format('d/m/Y H:i') }}
                                     </td>
-                                    
+
                                     <td>
                                         {{ $item->nama_pelanggan }}
                                     </td>
@@ -141,30 +143,29 @@
                                             </button>
                                         @endif
                                         @if ($item->status == 'unpost')
-                                        <button type="button" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         @endif
-                                     
+
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if ($item->status == 'unpost')
-                                               
-                                                    <a class="dropdown-item posting-btn"
-                                                        data-memo-id="{{ $item->id }}">Posting</a>
-                                             
-                                                    <a class="dropdown-item"
-                                                        href="{{ url('toko_pemalang/inquery_pemesananproduk/' . $item->id . '/edit') }}">Update</a>
-                                                
-                                                    <a class="dropdown-item"
-                                                    href="{{ url('/toko_pemalang/pemesanan_produk/' . $item->id ) }}">Show</a>
-                                                    @endif
-                                            @if ($item->status == 'posting')
-                                                    <a class="dropdown-item unpost-btn"
-                                                        data-memo-id="{{ $item->id }}">Unpost</a>
-                                                    <a class="dropdown-item"
-                                                    href="{{ url('/toko_pemalang/pemesanan_produk/' . $item->id ) }}">Show</a>
+                                                <a class="dropdown-item posting-btn"
+                                                    data-memo-id="{{ $item->id }}">Posting</a>
+
+                                                <a class="dropdown-item"
+                                                    href="{{ url('toko_pemalang/inquery_pemesananproduk/' . $item->id . '/edit') }}">Update</a>
+
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_pemalang/pemesanan_produk/' . $item->id) }}">Show</a>
                                             @endif
-                                           
+                                            @if ($item->status == 'posting')
+                                                <a class="dropdown-item unpost-btn"
+                                                    data-memo-id="{{ $item->id }}">Unpost</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_pemalang/pemesanan_produk/' . $item->id) }}">Show</a>
+                                            @endif
+
                                         </div>
                                     </td>
                                 </tr>
@@ -214,7 +215,6 @@
             form.action = "{{ url('toko_pemalang/inquery_pemesananproduk') }}";
             form.submit();
         }
-
     </script>
 
     <script>
@@ -254,7 +254,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan unpost
                 $.ajax({
-                    url: "{{ url('toko_pemalang/inquery_pemesananproduk/unpost_pemesananproduk/') }}/" + memoId,
+                    url: "{{ url('toko_pemalang/inquery_pemesananproduk/unpost_pemesananproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId
@@ -295,7 +296,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan posting
                 $.ajax({
-                    url: "{{ url('toko_pemalang/inquery_pemesananproduk/posting_pemesananproduk/') }}/" + memoId,
+                    url: "{{ url('toko_pemalang/inquery_pemesananproduk/posting_pemesananproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId

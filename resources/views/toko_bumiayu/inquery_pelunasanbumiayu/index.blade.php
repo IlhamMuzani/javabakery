@@ -21,11 +21,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Inquery Pelunasan Pemesanan</h1>
+                    <h1 class="m-0">Inquery Pelunasan Bumiayu</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">Inquery Pelunasan Pemesanan</li>
+                        <li class="breadcrumb-item active">Inquery Pelunasan Bumiayu</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -59,15 +59,17 @@
                     <h3 class="card-title">Pelunasan Pemesanan</h3>
                 </div>
                 <!-- /.card-header -->
-                 
+
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <select class="custom-select form-control" id="status" name="status">
                                     <option value="">- Semua Status -</option>
-                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>Posting</option>
-                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost</option>
+                                    <option value="posting" {{ Request::get('status') == 'posting' ? 'selected' : '' }}>
+                                        Posting</option>
+                                    <option value="unpost" {{ Request::get('status') == 'unpost' ? 'selected' : '' }}>Unpost
+                                    </option>
                                 </select>
                                 <label for="status">(Pilih Status)</label>
                             </div>
@@ -76,7 +78,7 @@
                                     value="{{ Request::get('tanggal_pelunasan') }}" max="{{ date('Y-m-d') }}" />
                                 <label for="tanggal_pelunasan">(Dari Tanggal)</label>
                             </div>
-                            <div class="col-md-3 mb-3"> 
+                            <div class="col-md-3 mb-3">
                                 <input class="form-control" id="tanggal_akhir" name="tanggal_akhir" type="date"
                                     value="{{ Request::get('tanggal_akhir') }}" max="{{ date('Y-m-d') }}" />
                                 <label for="tanggal_akhir">(Sampai Tanggal)</label>
@@ -88,19 +90,19 @@
                             </div>
                         </div>
                     </form>
-                    
 
-                   
+
+
                     <table id="datatables66" class="table table-bordered table-striped table-hover" style="font-size: 13px">
                         <thead class="">
                             <tr>
                                 {{-- <th> <input type="checkbox" name="" id="select_all_ids"></th> --}}
                                 <th class="text-center">No</th>
                                 <th>Kode penjualan</th>
-                                <th>Tanggal penjualan</th>
+                                <th>Tanggal</th>
                                 <th>Kasir</th>
                                 <th>Pelanggan</th>
-                          
+                                <th>Pembayaran</th>
                                 <th>Total</th>
                                 <th class="text-center" width="20">Opsi</th>
                             </tr>
@@ -108,34 +110,33 @@
                         <tbody>
                             @foreach ($inquery as $item)
                                 <tr class="dropdown"{{ $item->id }}>
-                                   
                                     <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>{{ $item->kode_penjualan }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_pelunasan)->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $item->kasir }}</td>
                                     <td>
-                                        {{ $item->kode_penjualan }}
-                                    </td>
-                                    <td>
-                                        {{ \Carbon\Carbon::parse($item->tanggal_pelunasan)->format('d/m/Y H:i') }}
-                                    </td>
-                                    <td>
-                                        {{ $item->kasir }}
-                                    </td>
-                                    <td>
-                                        @if ($item->kode_pelanggan && $item->nama_pelanggan)
-                                            {{ $item->kode_pelanggan }} / {{ $item->nama_pelanggan }}
+                                        @if ($item->dppemesanan && $item->dppemesanan->pemesananproduk)
+                                            {{ $item->dppemesanan->pemesananproduk->nama_pelanggan }}
                                         @else
-                                            Non Member
+                                            Data tidak tersedia
                                         @endif
                                     </td>
-
+                                    <td>
+                                        @if ($item->metodePembayaran)
+                                            {{ $item->metodePembayaran->nama_metode }}
+                                        @else
+                                            Tunai
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($item->pelunasan == 1)
-                                        {{ number_format($item->dppemesanan->dp_pemesanan , 0, ',', '.') }}
+                                            {{ number_format($item->dppemesanan->dp_pemesanan, 0, ',', '.') }}
                                             {{-- {{ $item->dppemesanan->dp_pemesanan ?? 'Data tidak tersedia' }} --}}
                                         @else
                                             {{ number_format($item->pelunasan, 0, ',', '.') }}
                                         @endif
                                     </td>
-
+                                    {{-- <td>{{ number_format($item->pelunasan, 0, ',', '.') }}</td> --}}
                                     <td class="text-center">
                                         @if ($item->status == 'posting')
                                             <button type="button" class="btn btn-success btn-sm">
@@ -143,40 +144,38 @@
                                             </button>
                                         @endif
                                         @if ($item->status == 'unpost')
-                                        <button type="button" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         @endif
-                                     
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             @if ($item->status == 'unpost')
-                                               
-                                                    <a class="dropdown-item posting-btn"
-                                                        data-memo-id="{{ $item->id }}">Posting</a>
-                                             
-                                                    {{-- <a class="dropdown-item"
-                                                        href="{{ url('toko_bumiayu/inquery_penjualanproduk/' . $item->id . '/edit') }}">Update</a> --}}
-                                                
-                                                    <a class="dropdown-item"
-                                                    href="{{ url('/toko_bumiayu/pelunasan_pemesananBmy/' . $item->id ) }}">Show</a>
-                                                    <form action="{{ route('penjualan_produk.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item">Delete</button>
-                                                    </form>
+                                                <a class="dropdown-item posting-btn"
+                                                    data-memo-id="{{ $item->id }}">Posting</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('toko_bumiayu/inquery_pelunasanbumiayu/' . $item->id . '/edit') }}">Update</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_bumiayu/pelunasan_pemesananBmy/' . $item->id) }}">Show</a>
+                                                <form action="{{ route('penjualan_produk.destroy', $item->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item">Delete</button>
+                                                </form>
                                             @endif
                                             @if ($item->status == 'posting')
-                                                    {{-- <a class="dropdown-item unpost-btn"
-                                                        data-memo-id="{{ $item->id }}">Unpost</a> --}}
-                                                    <a class="dropdown-item"
-                                                    href="{{ url('/toko_bumiayu/pelunasan_pemesananBmy/' . $item->id ) }}">Show</a>
+                                                <a class="dropdown-item unpost-btn"
+                                                    data-memo-id="{{ $item->id }}">Unpost</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ url('/toko_bumiayu/pelunasan_pemesananBmy/' . $item->id) }}">Show</a>
                                             @endif
-                                           
                                         </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
+
                     </table>
                     <!-- Modal Loading -->
                     <div class="modal fade" id="modal-loading" tabindex="-1" role="dialog"
@@ -199,12 +198,12 @@
     <script>
         var tanggalAwal = document.getElementById('tanggal_pelunasan');
         var tanggalAkhir = document.getElementById('tanggal_akhir');
-    
+
         // Jika tanggalAwal kosong, tanggalAkhir tidak bisa diisi
         if (tanggalAwal.value == "") {
             tanggalAkhir.readOnly = true;
         }
-    
+
         // Event Listener untuk tanggalAwal (dari tanggal)
         tanggalAwal.addEventListener('change', function() {
             if (this.value == "") {
@@ -212,14 +211,14 @@
             } else {
                 tanggalAkhir.readOnly = false; // Enable input tanggalAkhir
             }
-    
+
             // Reset nilai tanggalAkhir dan set batas minimalnya
             tanggalAkhir.value = "";
             var today = new Date().toISOString().split('T')[0]; // Tanggal hari ini
             tanggalAkhir.value = today; // Set default ke hari ini
             tanggalAkhir.setAttribute('min', this.value); // Set tanggalAkhir minimum sesuai tanggalAwal
         });
-    
+
         // Fungsi untuk mengirim form
         function cari() {
             var form = document.getElementById('form-action');
@@ -227,7 +226,7 @@
             form.submit();
         }
     </script>
-    
+
 
     {{-- unpost memo  --}}
     <script>
@@ -241,7 +240,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan unpost
                 $.ajax({
-                    url: "{{ url('toko_bumiayu/inquery_pelunasanbumiayu/unpost_penjualanproduk/') }}/" + memoId,
+                    url: "{{ url('toko_bumiayu/inquery_pelunasanbumiayu/unpost_penjualanproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId
@@ -282,7 +282,8 @@
 
                 // Kirim permintaan AJAX untuk melakukan posting
                 $.ajax({
-                    url: "{{ url('toko_bumiayu/inquery_pelunasanbumiayu/posting_penjualanproduk/') }}/" + memoId,
+                    url: "{{ url('toko_bumiayu/inquery_pelunasanbumiayu/posting_penjualanproduk/') }}/" +
+                        memoId,
                     type: 'GET',
                     data: {
                         id: memoId

@@ -335,12 +335,12 @@
             
             <div class="d-flex justify-content-between">
                 <div>
-                    <a href="{{ url('toko_banjaran/inquery_penjualanprodukbanjaran') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ url('toko_pemalang/inquery_penjualanprodukpemalang') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Kembali
                     </a>
                 </div>
                 <div>
-                    <a href="{{ route('toko_banjaran.inquery_penjualanproduk.cetak-pdf', $penjualan->id) }}"  id="printButton" target="_blank" class="btn btn-primary btn-sm">
+                    <a href="{{ route('toko_pemalang.inquery_penjualanproduk.cetak-pdf', $penjualan->id) }}"  id="printButton" target="_blank" class="btn btn-primary btn-sm">
                         <i class="fas fa-print"></i> Cetak PDF
                     </a>
                 </div>
