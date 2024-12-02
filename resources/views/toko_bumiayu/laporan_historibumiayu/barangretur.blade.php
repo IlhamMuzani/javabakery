@@ -60,7 +60,8 @@
                         <select class="form-control" id="kategori1" name="kategori">
                             <option value="">- Pilih -</option>
                             <option value="masuk" {{ old('kategori1') == 'masuk' ? 'selected' : '' }}>Barang Masuk</option>
-                            <option value="keluar" {{ old('kategori1') == 'keluar' ? 'selected' : '' }}>Barang Keluar</option>
+                            <option value="keluar" {{ old('kategori1') == 'keluar' ? 'selected' : '' }}>Barang Keluar
+                            </option>
                             <option value="retur" {{ old('kategori1') == 'retur' ? 'selected' : '' }}>Barang Retur</option>
                             <option value="oper" {{ old('kategori1') == 'oper' ? 'selected' : '' }}>Barang Oper</option>
 
@@ -69,7 +70,7 @@
                     <h3 class="card-title">Laporan Barang Retur</h3>
                 </div>
                 <!-- /.card-header -->
-                 
+
                 <div class="card-body">
                     <form method="GET" id="form-action">
                         <div class="row">
@@ -84,11 +85,22 @@
                                 <select class="custom-select form-control" id="klasifikasi_id" name="klasifikasi_id">
                                     <option value="">- Semua Klasifikasi -</option>
                                     <!-- Populate klasifikasi options dynamically -->
-                                    @foreach($klasifikasis as $klasifikasi)
-                                        <option value="{{ $klasifikasi->id }}" {{ Request::get('klasifikasi_id') == $klasifikasi->id ? 'selected' : '' }}>
+                                    @foreach ($klasifikasis as $klasifikasi)
+                                        <option value="{{ $klasifikasi->id }}"
+                                            {{ Request::get('klasifikasi_id') == $klasifikasi->id ? 'selected' : '' }}>
                                             {{ $klasifikasi->nama }}
                                         </option>
                                     @endforeach
+                                    <option value="gagal"
+                                        {{ Request::get('klasifikasi_id') == 'gagal' ? 'selected' : '' }}>PRODUK GAGAL
+                                    </option>
+                                    <option value="sampel"
+                                        {{ Request::get('klasifikasi_id') == 'sampel' ? 'selected' : '' }}>SAMPEL</option>
+                                    <option value="retur_tukang_sapu"
+                                        {{ Request::get('klasifikasi_id') == 'retur_tukang_sapu' ? 'selected' : '' }}>RETUR
+                                        TUKANG SAPU</option>
+                                    <option value="sortir"
+                                        {{ Request::get('klasifikasi_id') == 'sortir' ? 'selected' : '' }}>SORTIR</option>
                                 </select>
                                 <label for="klasifikasi_id">(Pilih Klasifikasi)</label>
                             </div>
@@ -103,12 +115,12 @@
                                 <label for="tanggal_akhir">(Sampai Tanggal)</label>
                             </div>
                         </div>
-                    
+
                     </form>
-                    
+
                     <form id="searchForm" method="GET">
                         <!-- Form fields go here -->
-                    
+
                         <div class="col-md-3 mb-3">
                             <button type="button" class="btn btn-outline-primary btn-block" onclick="cari()">
                                 <i class="fas fa-search"></i> Cari
@@ -135,17 +147,19 @@
                         </thead>
                         <tbody>
                             @php $no = 1; @endphp
-                            @foreach($stokBarangJadi as $returGroup)
-                                @foreach($returGroup as $retur)
-                                <tr>
-                                    <td class="text-center">{{ $no++ }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($retur['tanggal_retur'])->format('d/m/Y H:i') }}</td>
-                                    <td>{{ $retur->kode_retur }}</td>
-                                    <td>{{ $retur->produk->nama_produk }}</td>
-                                    <td style="text-align: right">{{ number_format($retur->jumlah, 0, ',', '.') }}</td>
-                                    <td style="text-align: right">{{ number_format($retur->produk->harga, 0, ',', '.') }}</td>
-                                    <td style="text-align: right">{{ number_format($retur->jumlah * $retur->produk->harga, 0, ',', '.') }}</td>
-                                </tr>
+                            @foreach ($stokBarangJadi as $returGroup)
+                                @foreach ($returGroup as $retur)
+                                    <tr>
+                                        <td class="text-center">{{ $no++ }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($retur['tanggal_retur'])->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $retur->kode_retur }}</td>
+                                        <td>{{ $retur->produk->nama_produk }}</td>
+                                        <td style="text-align: right">{{ number_format($retur->jumlah, 0, ',', '.') }}</td>
+                                        <td style="text-align: right">
+                                            {{ number_format($retur->produk->harga, 0, ',', '.') }}</td>
+                                        <td style="text-align: right">
+                                            {{ number_format($retur->jumlah * $retur->produk->harga, 0, ',', '.') }}</td>
+                                    </tr>
                                 @endforeach
                             @endforeach
                         </tbody>
@@ -182,7 +196,7 @@
     <script>
         var tanggalAwal = document.getElementById('tanggal_retur');
         var tanggalAkhir = document.getElementById('tanggal_akhir');
-    
+
         tanggalAwal.addEventListener('change', function() {
             if (this.value == "") {
                 tanggalAkhir.readOnly = true;
@@ -193,65 +207,65 @@
                 tanggalAkhir.setAttribute('min', this.value);
             }
         });
-    
+
         function cari() {
             var form = document.getElementById('form-action');
             form.action = "{{ route('barangReturbumiayu') }}";
-            form.submit();  
+            form.submit();
         }
     </script>
 
-<script>
-    document.getElementById('kategori1').addEventListener('change', function() {
-        var selectedValue = this.value;
+    <script>
+        document.getElementById('kategori1').addEventListener('change', function() {
+            var selectedValue = this.value;
 
-        if (selectedValue === 'masuk') {
-            window.location.href = "{{ url('toko_bumiayu/laporan_historibumiayu') }}";
-        } else if (selectedValue === 'keluar') {
-            window.location.href = "{{ url('toko_bumiayu/barangKeluarbumiayu') }}";
-        }else if (selectedValue === 'retur') {
-            window.location.href = "{{ url('toko_bumiayu/barangReturbumiayu') }}";
-        }else if (selectedValue === 'oper') {
-            window.location.href = "{{ url('toko_bumiayu/barangOperbumiayu') }}";
+            if (selectedValue === 'masuk') {
+                window.location.href = "{{ url('toko_bumiayu/laporan_historibumiayu') }}";
+            } else if (selectedValue === 'keluar') {
+                window.location.href = "{{ url('toko_bumiayu/barangKeluarbumiayu') }}";
+            } else if (selectedValue === 'retur') {
+                window.location.href = "{{ url('toko_bumiayu/barangReturbumiayu') }}";
+            } else if (selectedValue === 'oper') {
+                window.location.href = "{{ url('toko_bumiayu/barangOperbumiayu') }}";
+            }
+        });
+    </script>
+
+    <script>
+        function printReport() {
+            var tanggalAwal = document.getElementById('tanggal_retur').value;
+            var tanggalAkhir = document.getElementById('tanggal_akhir').value;
+
+            if (tanggalAwal === "" || tanggalAkhir === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Tanggal Belum Dipilih!',
+                    text: 'Silakan isi tanggal terlebih dahulu.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6',
+                    background: '#fff',
+                    customClass: {
+                        popup: 'animated bounceIn'
+                    }
+                });
+                return;
+            }
+
+            const form = document.getElementById('form-action');
+            form.action = "{{ url('toko_bumiayu/printLaporanBRbumiayu') }}";
+            form.target = "_blank";
+            form.submit();
         }
-    });
-</script>
+    </script>
 
-<script>
-    function printReport() {
-        var tanggalAwal = document.getElementById('tanggal_retur').value;
-        var tanggalAkhir = document.getElementById('tanggal_akhir').value;
 
-        if (tanggalAwal === "" || tanggalAkhir === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Tanggal Belum Dipilih!',
-                text: 'Silakan isi tanggal terlebih dahulu.',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#3085d6',
-                background: '#fff',
-                customClass: {
-                    popup: 'animated bounceIn'
-                }
-            });
-            return;
+    <script>
+        function exportExcelBR() {
+            const form = document.getElementById('form-action');
+            form.action = "{{ url('toko_bumiayu/printExcelBrbumiayu') }}";
+            form.target = "_blank";
+            form.submit();
         }
-
-        const form = document.getElementById('form-action');
-        form.action = "{{ url('toko_bumiayu/printLaporanBRbumiayu') }}";
-        form.target = "_blank";
-        form.submit();
-    }
-</script>
-
-
-<script>
-    function exportExcelBR() {
-    const form = document.getElementById('form-action');
-    form.action = "{{ url('toko_bumiayu/printExcelBrbumiayu') }}";
-    form.target = "_blank";
-    form.submit();
-}
-</script>
+    </script>
 
 @endsection

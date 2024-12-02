@@ -43,31 +43,31 @@ class Inquery_hasilpenjualanController extends Controller
         $tanggal_akhir = $request->tanggal_akhir;
         $toko_id = $request->toko_id; // Menambahkan filter toko_id
         $klasifikasi_id = $request->klasifikasi_id; // Menambahkan filter klasifikasi_id
-    
+
         // Ambil data toko untuk dropdown
         $tokos = Toko::all();  // Mengambil semua data toko
         $klasifikasis = Klasifikasi::all(); // Mengambil semua data klasifikasi
-    
+
         // Query dasar dengan relasi ke produk dan klasifikasi
         $query = Pengiriman_barangjadi::with('produk.klasifikasi');
-    
+
         // Filter berdasarkan status
         if ($status) {
             $query->where('status', $status);
         }
-    
+
         // Filter berdasarkan toko_id
         if ($toko_id) {
             $query->where('toko_id', $toko_id);
         }
-    
+
         // Filter berdasarkan klasifikasi_id
         if ($klasifikasi_id) {
-            $query->whereHas('produk', function($q) use ($klasifikasi_id) {
+            $query->whereHas('produk', function ($q) use ($klasifikasi_id) {
                 $q->where('klasifikasi_id', $klasifikasi_id);
             });
         }
-    
+
         // Filter berdasarkan tanggal pengiriman
         if ($tanggal_pengiriman && $tanggal_akhir) {
             $tanggal_pengiriman = Carbon::parse($tanggal_pengiriman)->startOfDay();
@@ -83,15 +83,15 @@ class Inquery_hasilpenjualanController extends Controller
             // Jika tidak ada filter tanggal, tampilkan data hari ini
             $query->whereDate('tanggal_pengiriman', Carbon::today());
         }
-    
+
         // Ambil data dengan pengurutan berdasarkan tanggal pengiriman terbaru
         $stokBarangJadi = $query->orderBy('tanggal_pengiriman', 'desc')->get();
-    
+
         // Kirim variabel ke view
         return view('admin.inquery_hasilpenjualan.index', compact('stokBarangJadi', 'tokos', 'klasifikasis'));
     }
-    
-    
+
+
     // public function barangKeluar(Request $request)
     // {
     //     $status = $request->status;
@@ -160,12 +160,12 @@ class Inquery_hasilpenjualanController extends Controller
         $tanggal_akhir = $request->tanggal_akhir;
         $toko_id = $request->toko_id;
         $klasifikasi_id = $request->klasifikasi_id;
-    
+
         $inquery = Penjualanproduk::with('detailPenjualanProduk.produk')
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->when($toko_id, function ($query, $toko_id) {
+            ->when($toko_id !== null, function ($query) use ($toko_id) {
                 return $query->where('toko_id', $toko_id);
             })
             ->when($tanggal_penjualan && $tanggal_akhir, function ($query) use ($tanggal_penjualan, $tanggal_akhir) {
@@ -186,17 +186,17 @@ class Inquery_hasilpenjualanController extends Controller
                     return $query->where('klasifikasi_id', $klasifikasi_id);
                 });
             });
-    
+
         // Ambil data penjualan
         $inquery = $inquery->get();
-    
+
         // Gabungkan hasil berdasarkan produk_id
         $finalResults = [];
-    
+
         foreach ($inquery as $penjualan) {
             foreach ($penjualan->detailPenjualanProduk as $detail) {
                 $key = $detail->produk_id;
-    
+
                 if (!isset($finalResults[$key])) {
                     $finalResults[$key] = [
                         'tanggal_penjualan' => $penjualan->tanggal_penjualan,
@@ -208,11 +208,11 @@ class Inquery_hasilpenjualanController extends Controller
                         'total' => 0,
                     ];
                 }
-    
+
                 // Jumlahkan jumlah dan total
                 $finalResults[$key]['jumlah'] += $detail->jumlah;
                 $finalResults[$key]['total'] += $detail->total;
-    
+
                 // Hitung diskon 10% dari jumlah * harga
                 if ($detail->diskon > 0) {
                     $diskonPerItem = $detail->harga * 0.10; // Diskon per unit
@@ -220,18 +220,19 @@ class Inquery_hasilpenjualanController extends Controller
                 }
             }
         }
-    
+
         $tokos = Toko::all(); // Assuming Toko is a model for your toko table
         $klasifikasis = Klasifikasi::all(); // Assuming Klasifikasi is a model for your klasifikasi table
-    
+
         return view('admin.inquery_hasilpenjualan.barangkeluar', [
             'finalResults' => $finalResults,
             'tokos' => $tokos,
             'klasifikasis' => $klasifikasis
         ]);
     }
-    
-    
+
+
+
 
     public function barangRetur(Request $request)
     {
@@ -265,5 +266,4 @@ class Inquery_hasilpenjualanController extends Controller
 
         return view('admin.inquery_hasilpenjualan.barangretur', compact('inquery'));
     }
-
 }

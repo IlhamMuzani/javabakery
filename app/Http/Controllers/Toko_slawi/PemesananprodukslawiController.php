@@ -36,27 +36,27 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 class PemesananprodukslawiController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $today = Carbon::today();
-    
+
         $inquery = Pemesananproduk::with('dppemesanan') // Memuat relasi dppemesanan
             ->where('toko_id', 3) // Hanya tampilkan data dengan toko_id = 1
             ->where(function ($query) use ($today) {
                 $query->whereDate('created_at', $today)
-                      ->orWhere(function ($query) use ($today) {
-                          $query->where('status', 'unpost')
-                                ->whereDate('created_at', '<', $today);
-                      });
+                    ->orWhere(function ($query) use ($today) {
+                        $query->where('status', 'unpost')
+                            ->whereDate('created_at', '<', $today);
+                    });
             })
             ->orderBy('created_at', 'desc')
             ->get();
-    
+
         // Kirim data ke view
         return view('toko_slawi.pemesanan_produk.index', compact('inquery'));
     }
-    
+
     public function pelanggan($id)
     {
         $user = Pelanggan::where('id', $id)->first();
@@ -78,12 +78,21 @@ class PemesananprodukslawiController extends Controller
         $produks = Produk::with(['tokoslawi', 'stokpesanan_tokoslawi'])->get();
 
         $kategoriPelanggan = 'member';
-    
-        return view('toko_slawi.pemesanan_produk.create', compact('barangs','metodes', 
-        'tokos', 'produks', 'details', 'tokoslawis', 'pelanggans', 
-        'kategoriPelanggan','tokotegal','search'));
+
+        return view('toko_slawi.pemesanan_produk.create', compact(
+            'barangs',
+            'metodes',
+            'tokos',
+            'produks',
+            'details',
+            'tokoslawis',
+            'pelanggans',
+            'kategoriPelanggan',
+            'tokotegal',
+            'search'
+        ));
     }
-    
+
     public function getCustomerByKode($kode)
     {
         $customer = Pelanggan::where('kode_pelanggan', $kode)->first();
@@ -114,7 +123,7 @@ class PemesananprodukslawiController extends Controller
             ], 404);
         }
     }
-   
+
     // public function store(Request $request)
     // {
     //     // Validasi pelanggan
@@ -196,7 +205,7 @@ class PemesananprodukslawiController extends Controller
     //     $kode = $this->kode();
     //     $format = 'd/m/Y H:i';
     //     $tanggal_kirim = Carbon::createFromFormat($format, $request->tanggal_kirim)->format('Y-m-d H:i:s');
-        
+
     //     // Buat pemesanan baru
     //     $cetakpdf = Pemesananproduk::create([
     //         'nama_pelanggan' => $request->nama_pelanggan,
@@ -241,7 +250,7 @@ class PemesananprodukslawiController extends Controller
     //                 'total' => $data_pesanan['total'],
     //             ]);
     //         }
-            
+
     //         // Simpan DP dan Kekurangan ke tabel dppemesanans
     //         Dppemesanan::create([
     //             'pemesananproduk_id' => $cetakpdf->id,
@@ -346,7 +355,7 @@ class PemesananprodukslawiController extends Controller
                 ->with('data_pembelians', $data_pembelians);
         }
 
-        
+
         $kode = $this->kode();
         $tanggal_kirim = $request->tanggal_kirim . ' ' . $request->waktu_kirim;
         $format = 'd/m/Y H:i';
@@ -368,10 +377,10 @@ class PemesananprodukslawiController extends Controller
             'toko_id' => '3',
             // 'toko_id' =>$request->toko_id,
             'kasir' => ucfirst(auth()->user()->karyawan->nama_lengkap),
-            'metode_id' => $request->metode_id, 
+            'metode_id' => $request->metode_id,
             'sub_totalasli' => $request->sub_totalasli,
-            'total_fee' => $request->total_fee, 
-            'keterangan' => $request->keterangan, 
+            'total_fee' => $request->total_fee,
+            'keterangan' => $request->keterangan,
             'kode_pemesanan' => $kode,
             'qrcode_pemesanan' => 'https://javabakery.id/pemesanan/' . $kode,
             'tanggal_pemesanan' => Carbon::now('Asia/Jakarta'),
@@ -395,7 +404,7 @@ class PemesananprodukslawiController extends Controller
                     'total' => $data_pesanan['total'],
                 ]);
             }
-            
+
             // Simpan DP dan Kekurangan ke tabel dppemesanans
             Dppemesanan::create([
                 'pemesananproduk_id' => $cetakpdf->id,
@@ -437,13 +446,13 @@ class PemesananprodukslawiController extends Controller
     {
         $pemesanan = Pemesananproduk::findOrFail($id);
         $pelanggans = Pelanggan::all();
-        
+
         $dp = $pemesanan->dppemesanan;
         $tokos = $pemesanan->toko;
-    
-        $pdf = FacadePdf::loadView('toko_slawi.pemesanan_produk.cetak-pdf', compact('pemesanan', 'tokos', 'pelanggans','dp'));
+
+        $pdf = FacadePdf::loadView('toko_slawi.pemesanan_produk.cetak-pdf', compact('pemesanan', 'tokos', 'pelanggans', 'dp'));
         $pdf->setPaper('a4', 'portrait');
-    
+
         return $pdf->stream('pemesanan.pdf');
     }
 
@@ -452,13 +461,13 @@ class PemesananprodukslawiController extends Controller
         $prefix = 'PB';
         $year = date('y'); // Dua digit terakhir dari tahun
         $date = date('dm'); // Format bulan dan hari: MMDD
-    
+
         // Mengambil kode retur terakhir yang dibuat pada hari yang sama
         $lastBarang = Pemesananproduk::where('kode_pemesanan', 'LIKE', $prefix . '%')
-                                      ->whereDate('tanggal_pemesanan', Carbon::today())
-                                      ->orderBy('kode_pemesanan', 'desc')
-                                      ->first();
-    
+            ->whereDate('tanggal_pemesanan', Carbon::today())
+            ->orderBy('kode_pemesanan', 'desc')
+            ->first();
+
         if (!$lastBarang) {
             $num = 1;
         } else {
@@ -466,9 +475,9 @@ class PemesananprodukslawiController extends Controller
             $lastNum = (int) substr($lastCode, strlen($prefix . $date . $year)); // Mengambil urutan terakhir
             $num = $lastNum + 1;
         }
-    
+
         $formattedNum = sprintf("%04d", $num); // Urutan dengan 4 digit
-        $newCode = $prefix. $date  . $year . $formattedNum;
+        $newCode = $prefix . $date  . $year . $formattedNum;
         return $newCode;
     }
 
@@ -477,22 +486,22 @@ class PemesananprodukslawiController extends Controller
         $prefix = 'DPB';
         $year = date('y'); // Dua digit terakhir dari tahun
         $date = date('dm'); // Format bulan dan hari: MMDD
-    
+
         // Mengambil kode retur terakhir yang dibuat pada hari yang sama
         $lastBarang = Dppemesanan::whereDate('tanggal_dp', Carbon::today())
-                                      ->orderBy('kode_dppemesanan', 'desc')
-                                      ->first();
-    
+            ->orderBy('kode_dppemesanan', 'desc')
+            ->first();
+
         if (!$lastBarang) {
             $num = 1;
         } else {
             $lastCode = $lastBarang->kode_dppemesanan;
-            $lastNum = (int) substr($lastCode, strlen($prefix. $date . $year )); // Mengambil urutan terakhir
+            $lastNum = (int) substr($lastCode, strlen($prefix . $date . $year)); // Mengambil urutan terakhir
             $num = $lastNum + 1;
         }
-    
+
         $formattedNum = sprintf("%04d", $num); // Urutan dengan 4 digit
-        $newCode = $prefix. $date . $year  . $formattedNum;
+        $newCode = $prefix . $date . $year  . $formattedNum;
         return $newCode;
     }
 
@@ -517,163 +526,160 @@ class PemesananprodukslawiController extends Controller
         $tokoslawis = Tokoslawi::all();
         $tokos = Toko::all();
         $produks = Produk::with('tokoslawi')->get();
-            
+
         // Mengambil data pemesananproduk dengan detailpemesananproduk dan dppemesanans yang terkait
         $inquery = Pemesananproduk::with(['detailpemesananproduk', 'dppemesanans'])->findOrFail($id);
-            
-            
+
+
         // ID toko yang dipilih
         $selectedTokoId = $inquery->toko_id;
-        
+
         $metodes = Metodepembayaran::all();
-        
+
         // Mengembalikan view dengan data yang diperlukan
         return view('toko_slawi.pemesanan_produk.update', compact('inquery', 'tokos', 'pelanggans', 'tokoslawis', 'produks', 'selectedTokoId', 'metodes'));
     }
-        
+
     public function update(Request $request, $id)
     {
-            // Validasi pelanggan
-            $validasi_pelanggan = Validator::make(
-                $request->all(),
-                [
-                    'nama_pelanggan' => 'required',
-                    'telp' => 'required',
-                    'alamat' => 'required',
-                    'kategori' => 'required',
-                ],
-                [
-                    'nama_pelanggan.required' => 'Masukkan nama pelanggan',
-                    'telp.required' => 'Masukkan telepon',
-                    'alamat.required' => 'Masukkan alamat',
-                    'kategori.required' => 'Pilih kategori pelanggan',
-                ]
-            );
-        
-            // Handling errors for pelanggan
-            $error_pelanggans = array();
-        
-            if ($validasi_pelanggan->fails()) {
-                array_push($error_pelanggans, $validasi_pelanggan->errors()->all()[0]);
-            }
-        
-            // Handling errors for pesanans
-            $error_pesanans = array();
-            $data_pembelians = collect();
-        
-            if ($request->has('produk_id')) {
-                for ($i = 0; $i < count($request->produk_id); $i++) {
-                    $validasi_produk = Validator::make($request->all(), [
-                        'kode_produk.' . $i => 'required',
-                        'produk_id.' . $i => 'required',
-                        'nama_produk.' . $i => 'required',
-                        'harga.' . $i => 'required',
-                        'total.' . $i => 'required',
-                    ]);
-        
-                    if ($validasi_produk->fails()) {
-                        array_push($error_pesanans, "Barang no " . ($i + 1) . " belum dilengkapi!");
-                    }
-        
-                    $produk_id = is_null($request->produk_id[$i]) ? '' : $request->produk_id[$i];
-                    $kode_produk = is_null($request->kode_produk[$i]) ? '' : $request->kode_produk[$i];
-                    $nama_produk = is_null($request->nama_produk[$i]) ? '' : $request->nama_produk[$i];
-                    $jumlah = is_null($request->jumlah[$i]) ? '' : $request->jumlah[$i];
-                    $diskon = is_null($request->diskon[$i]) ? '' : $request->diskon[$i];
-                    $harga = is_null($request->harga[$i]) ? '' : $request->harga[$i];
-                    $total = is_null($request->total[$i]) ? '' : $request->total[$i];
-        
-                    $data_pembelians->push([
-                        'kode_produk' => $kode_produk,
-                        'produk_id' => $produk_id,
-                        'nama_produk' => $nama_produk,
-                        'jumlah' => $jumlah,
-                        'diskon' => $diskon,
-                        'harga' => $harga,
-                        'total' => $total,
-                    ]);
-                }
-            }
-        
-            // Handling errors for pelanggans or pesanans
-            if ($error_pelanggans || $error_pesanans) {
-                return back()
-                    ->withInput()
-                    ->with('error_pelanggans', $error_pelanggans)
-                    ->with('error_pesanans', $error_pesanans)
-                    ->with('data_pembelians', $data_pembelians);
-            }
-        
-            // Update pemesanan yang ada
-            $pemesanan = Pemesananproduk::find($id);
-            $pemesanan->update([
-                'nama_pelanggan' => $request->nama_pelanggan,
-                'telp' => $request->telp,
-                'alamat' => $request->alamat,
-                'kategori' => $request->kategori,
-                'sub_total' => $request->sub_total,
-                'nama_penerima' => $request->nama_penerima,
-                'telp_penerima' => $request->telp_penerima,
-                'alamat_penerima' => $request->alamat_penerima,
-                'tanggal_kirim' => $request->tanggal_kirim,
-                'toko_id' => $request->toko,
-                // 'kode_pemesanan' => $request->kode_pemesanan,
-                // 'qrcode_pemesanan' => 'https://javabakery.id/pemesanan/' . $this->kode(),
-                // 'tanggal_pemesanan' => Carbon::now('Asia/Jakarta'),
-                'status' => 'posting',
-            ]);
-        
-            // Simpan atau perbarui detail pemesanan
-            foreach ($data_pembelians as $data_pesanan) {
-                $detail = Detailpemesananproduk::where('pemesananproduk_id', $pemesanan->id)
-                    ->where('kode_produk', $data_pesanan['kode_produk'])
-                    ->first();
-        
-                if ($detail) {
-                    // Jika detail sudah ada, perbarui
-                    $detail->update([
-                        'nama_produk' => $data_pesanan['nama_produk'],
-                        'jumlah' => $data_pesanan['jumlah'],
-                        'diskon' => $data_pesanan['diskon'],
-                        'harga' => $data_pesanan['harga'],
-                        'total' => $data_pesanan['total'],
-                    ]);
-                } else {
-                    // Jika detail belum ada, buat baru
-                    Detailpemesananproduk::create([
-                        'pemesananproduk_id' => $pemesanan->id,
-                        'kode_produk' => $data_pesanan['kode_produk'],
-                        'nama_produk' => $data_pesanan['nama_produk'],
-                        'jumlah' => $data_pesanan['jumlah'],
-                        'diskon' => $data_pesanan['diskon'],
-                        'harga' => $data_pesanan['harga'],
-                        'total' => $data_pesanan['total'],
-                    ]);
-                }
-            }
-        
-            // Ambil detail pemesanan untuk ditampilkan di halaman cetak
-            $details = Detailpemesananproduk::where('pemesananproduk_id', $pemesanan->id)->get();
-        
-            // Redirect ke halaman indeks pemesananproduk
-            return redirect('toko_slawi/pemesanan_produk');
+        // Validasi pelanggan
+        $validasi_pelanggan = Validator::make(
+            $request->all(),
+            [
+                'nama_pelanggan' => 'required',
+                'telp' => 'required',
+                'alamat' => 'required',
+                'kategori' => 'required',
+            ],
+            [
+                'nama_pelanggan.required' => 'Masukkan nama pelanggan',
+                'telp.required' => 'Masukkan telepon',
+                'alamat.required' => 'Masukkan alamat',
+                'kategori.required' => 'Pilih kategori pelanggan',
+            ]
+        );
 
-    }   
+        // Handling errors for pelanggan
+        $error_pelanggans = array();
+
+        if ($validasi_pelanggan->fails()) {
+            array_push($error_pelanggans, $validasi_pelanggan->errors()->all()[0]);
+        }
+
+        // Handling errors for pesanans
+        $error_pesanans = array();
+        $data_pembelians = collect();
+
+        if ($request->has('produk_id')) {
+            for ($i = 0; $i < count($request->produk_id); $i++) {
+                $validasi_produk = Validator::make($request->all(), [
+                    'kode_produk.' . $i => 'required',
+                    'produk_id.' . $i => 'required',
+                    'nama_produk.' . $i => 'required',
+                    'harga.' . $i => 'required',
+                    'total.' . $i => 'required',
+                ]);
+
+                if ($validasi_produk->fails()) {
+                    array_push($error_pesanans, "Barang no " . ($i + 1) . " belum dilengkapi!");
+                }
+
+                $produk_id = is_null($request->produk_id[$i]) ? '' : $request->produk_id[$i];
+                $kode_produk = is_null($request->kode_produk[$i]) ? '' : $request->kode_produk[$i];
+                $nama_produk = is_null($request->nama_produk[$i]) ? '' : $request->nama_produk[$i];
+                $jumlah = is_null($request->jumlah[$i]) ? '' : $request->jumlah[$i];
+                $diskon = is_null($request->diskon[$i]) ? '' : $request->diskon[$i];
+                $harga = is_null($request->harga[$i]) ? '' : $request->harga[$i];
+                $total = is_null($request->total[$i]) ? '' : $request->total[$i];
+
+                $data_pembelians->push([
+                    'kode_produk' => $kode_produk,
+                    'produk_id' => $produk_id,
+                    'nama_produk' => $nama_produk,
+                    'jumlah' => $jumlah,
+                    'diskon' => $diskon,
+                    'harga' => $harga,
+                    'total' => $total,
+                ]);
+            }
+        }
+
+        // Handling errors for pelanggans or pesanans
+        if ($error_pelanggans || $error_pesanans) {
+            return back()
+                ->withInput()
+                ->with('error_pelanggans', $error_pelanggans)
+                ->with('error_pesanans', $error_pesanans)
+                ->with('data_pembelians', $data_pembelians);
+        }
+
+        // Update pemesanan yang ada
+        $pemesanan = Pemesananproduk::find($id);
+        $pemesanan->update([
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'telp' => $request->telp,
+            'alamat' => $request->alamat,
+            'kategori' => $request->kategori,
+            'sub_total' => $request->sub_total,
+            'nama_penerima' => $request->nama_penerima,
+            'telp_penerima' => $request->telp_penerima,
+            'alamat_penerima' => $request->alamat_penerima,
+            'tanggal_kirim' => $request->tanggal_kirim,
+            'toko_id' => $request->toko,
+            // 'kode_pemesanan' => $request->kode_pemesanan,
+            // 'qrcode_pemesanan' => 'https://javabakery.id/pemesanan/' . $this->kode(),
+            // 'tanggal_pemesanan' => Carbon::now('Asia/Jakarta'),
+            'status' => 'posting',
+        ]);
+
+        // Simpan atau perbarui detail pemesanan
+        foreach ($data_pembelians as $data_pesanan) {
+            $detail = Detailpemesananproduk::where('pemesananproduk_id', $pemesanan->id)
+                ->where('kode_produk', $data_pesanan['kode_produk'])
+                ->first();
+
+            if ($detail) {
+                // Jika detail sudah ada, perbarui
+                $detail->update([
+                    'nama_produk' => $data_pesanan['nama_produk'],
+                    'jumlah' => $data_pesanan['jumlah'],
+                    'diskon' => $data_pesanan['diskon'],
+                    'harga' => $data_pesanan['harga'],
+                    'total' => $data_pesanan['total'],
+                ]);
+            } else {
+                // Jika detail belum ada, buat baru
+                Detailpemesananproduk::create([
+                    'pemesananproduk_id' => $pemesanan->id,
+                    'kode_produk' => $data_pesanan['kode_produk'],
+                    'nama_produk' => $data_pesanan['nama_produk'],
+                    'jumlah' => $data_pesanan['jumlah'],
+                    'diskon' => $data_pesanan['diskon'],
+                    'harga' => $data_pesanan['harga'],
+                    'total' => $data_pesanan['total'],
+                ]);
+            }
+        }
+
+        // Ambil detail pemesanan untuk ditampilkan di halaman cetak
+        $details = Detailpemesananproduk::where('pemesananproduk_id', $pemesanan->id)->get();
+
+        // Redirect ke halaman indeks pemesananproduk
+        return redirect('toko_slawi/pemesanan_produk');
+    }
 
     public function destroy($id)
     {
-            DB::transaction(function () use ($id) {
-                $pemesanan = Pemesananproduk::findOrFail($id);
-        
-                // Menghapus (soft delete) detail pemesanan terkait
-                DetailPemesananProduk::where('pemesananproduk_id', $id)->delete();
-        
-                // Menghapus (soft delete) data pemesanan
-                $pemesanan->delete();
-            });
-        
-            return redirect('toko_slawi/pemesanan_produk')->with('success', 'Berhasil menghapus data pesanan');
-    }
-        
+        DB::transaction(function () use ($id) {
+            $pemesanan = Pemesananproduk::findOrFail($id);
 
+            // Menghapus (soft delete) detail pemesanan terkait
+            DetailPemesananProduk::where('pemesananproduk_id', $id)->delete();
+
+            // Menghapus (soft delete) data pemesanan
+            $pemesanan->delete();
+        });
+
+        return redirect('toko_slawi/pemesanan_produk')->with('success', 'Berhasil menghapus data pesanan');
+    }
 }

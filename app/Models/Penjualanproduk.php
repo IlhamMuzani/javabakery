@@ -15,7 +15,7 @@ class Penjualanproduk extends Model
 {
     use HasFactory;
 
-    
+
     protected $fillable = [
         'kode_penjualan',
         'kode_pelanggan',
@@ -48,7 +48,7 @@ class Penjualanproduk extends Model
         'dppemesanan_id',
         'status',
         'tanggaL_akhir',
-  
+
     ];
 
     use SoftDeletes;
@@ -77,30 +77,29 @@ class Penjualanproduk extends Model
     {
         return $this->hasMany(Detailpenjualanproduk::class, 'penjualanproduk_id');
     }
-    
+
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'pelanggan_id');
     }
-    
+
     public function toko()
     {
         return $this->belongsTo(Toko::class, 'toko_id');
     }
-    
+
     public function metodePembayaran()
-{
-    return $this->belongsTo(Metodepembayaran::class, 'metode_id');
-}
+    {
+        return $this->belongsTo(Metodepembayaran::class, 'metode_id');
+    }
 
-public function pelunasan()
-{
-    return $this->hasOne(Pelunasan::class);
-}
+    public function pelunasan()
+    {
+        return $this->hasOne(Pelunasan::class);
+    }
 
-public function dppemesanan()
-{
-    return $this->belongsTo(Dppemesanan::class, 'dppemesanan_id');
-}
-
+    public function dppemesanan()
+    {
+        return $this->belongsTo(Dppemesanan::class, 'dppemesanan_id');
+    }
 }
