@@ -556,7 +556,7 @@
                     url: $(this).attr('action'),
                     type: 'POST',
                     data: $(this).serialize() + '&tanggal_kirim=' +
-                    tanggal_kirim, // Kirim tanggal dan waktu
+                        tanggal_kirim, // Kirim tanggal dan waktu
                     success: function(response) {
                         if (response.pdfUrl) {
                             // Membuka URL di tab baru
@@ -586,7 +586,7 @@
         });
     </script>
 
-
+    {{-- 
     <script>
         function applyDiscount() {
             var subTotalAsli = parseFloat(document.getElementById('sub_totalasli').value.replace('Rp', '').replace(/\./g,
@@ -721,7 +721,142 @@
             applyDiscount(); // Terapkan diskon saat halaman dimuat
             getData1(); // Tetapkan metode pembayaran default
         });
+    </script> --}}
+
+    <script>
+        function getData1() {
+            var metodeId = document.getElementById('nama_metode').value;
+            var fee = document.getElementById('fee');
+            var keterangan = document.getElementById('keterangan');
+            var paymentFields = document.getElementById('payment-fields');
+
+            // Reset sub_total ke nilai asli
+            var subTotalAsli = document.getElementById('sub_totalasli').value;
+            document.getElementById('sub_total').value = subTotalAsli;
+
+            if (!metodeId || document.querySelector('#nama_metode option:checked').text === '- Pilih -') {
+                // Jika opsi "Pilih" dipilih, reset fee dan keterangan
+                paymentFields.style.display = 'none';
+                fee.value = '';
+                keterangan.value = '';
+
+                // Update perhitungan untuk kembali ke nilai awal
+                updateCalculations();
+                return;
+            }
+
+            if (document.querySelector('#nama_metode option:checked').text === 'Tunai') {
+                paymentFields.style.display = 'none';
+            } else {
+                $.ajax({
+                    url: "{{ url('toko_bumiayu/metodebayar/metode') }}" + "/" + metodeId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        console.log('Respons dari server:', response);
+
+                        fee.value = '';
+                        keterangan.value = '';
+                        paymentFields.style.display = 'block';
+
+                        if (response && response.fee) {
+                            fee.value = response.fee;
+                        }
+                        if (response && response.keterangan) {
+                            keterangan.value = response.keterangan;
+                        }
+
+                        // Update perhitungan setelah data diambil
+                        updateCalculations();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Terjadi kesalahan dalam permintaan AJAX:', error);
+                    }
+                });
+            }
+
+            // Update perhitungan untuk merefleksikan perubahan
+            updateCalculations();
+        }
+
+
+
+        function updateCalculations() {
+            var subTotalAsli = parseFloat(document.getElementById('sub_totalasli').value.replace('Rp', '').replace(/\./g,
+                '').trim()) || 0;
+            var fee = parseFloat(document.getElementById('fee').value.replace('%', '').trim()) || 0;
+            var totalFee = (subTotalAsli * fee / 100) || 0;
+            var finalTotal = subTotalAsli + totalFee;
+
+            // Format nilai menjadi mata uang
+            function formatCurrency(value) {
+                var formattedValue = value.toFixed(2).replace(/\.00$/, '');
+                return 'Rp' + formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            // Update total fee dan final sub total
+            document.getElementById('total_fee').value = formatCurrency(totalFee);
+            document.getElementById('sub_total').value = formatCurrency(finalTotal);
+
+            // Validate DP
+            validateDP();
+        }
+
+        function formatAndUpdateKembali() {
+            var subTotal = parseFloat(document.getElementById('sub_total').value.replace('Rp', '').replace(/\./g, '')
+                .trim()) || 0;
+            var dpPemesanan = parseFloat(document.getElementById('dp_pemesanan').value.replace('Rp', '').replace(/\./g, '')
+                .trim()) || 0;
+            var kekuranganPemesanan = subTotal - dpPemesanan;
+
+            document.getElementById('kekurangan_pemesanan').value = formatCurrency(kekuranganPemesanan);
+
+            // Validate DP
+            validateDP();
+        }
+
+        function validateDP() {
+            var subTotal = parseFloat(document.getElementById('sub_total').value.replace('Rp', '').replace(/\./g, '')
+                .trim()) || 0;
+            var dpPemesanan = parseFloat(document.getElementById('dp_pemesanan').value.replace('Rp', '').replace(/\./g, '')
+                .trim()) || 0;
+            var minDP = subTotal * 0.5;
+            var dpPemesananElement = document.getElementById('dp_pemesanan');
+
+            if (dpPemesanan < minDP) {
+                dpPemesananElement.setCustomValidity('DP inimal 50% dari Total');
+            } else if (dpPemesanan > subTotal) {
+                dpPemesananElement.setCustomValidity('DP Tidak Boleh Melebihi Total');
+            } else {
+                dpPemesananElement.setCustomValidity('');
+            }
+        }
+
+        document.getElementById('dp_pemesanan').addEventListener('input', function() {
+            formatAndUpdateKembali();
+            validateDP();
+        });
+
+
+        // Add event listeners for initialization
+        document.getElementById('nama_metode').addEventListener('change', getData1);
+        document.getElementById('sub_total').addEventListener('input', updateCalculations);
+        document.getElementById('dp_pemesanan').addEventListener('input', formatAndUpdateKembali);
+
+        // Initialize with "Tunai" as default method
+        document.addEventListener('DOMContentLoaded', function() {
+            var defaultMethod = 'Tunai';
+            var options = document.getElementById('nama_metode').options;
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].text === defaultMethod) {
+                    options[i].selected = true;
+                    break;
+                }
+            }
+            getData1();
+        });
     </script>
+
 
     <script>
         function showCategoryModalCatatan(urutan) {
@@ -1074,7 +1209,7 @@
 
         // Fungsi untuk memilih data barang dari modal
         function getSelectedData(id, kode_produk, kode_lama, nama_produk, member, diskonmember, nonmember,
-        diskonnonmember) {
+            diskonnonmember) {
             var urutan = $('#tableProduk').attr('data-urutan');
             var kategori = $('#kategori').val();
             var harga = kategori === 'member' ? member : nonmember;
